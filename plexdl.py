@@ -293,7 +293,7 @@ class MovieDownloader(object):
                 msg += " Item %d of %d" % (counter+1, len(parts))
             if "subtitle" in part:
                 print "Downloading subtitle "+ msg
-                link = constructPlexUrl(part['key'])
+                link = constructPlexDownloadUrl(part['key'])
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,part),extension=part["container"],overwrite=False):
                     print "Subtitle file not downloaded"
             elif self.transcodeactive=="enable":
@@ -303,7 +303,7 @@ class MovieDownloader(object):
                     print "Video not transcoded"
             else:
                 print "Downloading "+ msg
-                link = constructPlexUrl(part['key'])
+                link = constructPlexDownloadUrl(part['key'])
                 ext = os.path.splitext(part['filename'])[1][1:] #override
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,part),extension=getFilesystemSafeName(ext),overwrite=False):
                     print "Video not downloaded"
@@ -601,7 +601,7 @@ class TvDownloader(object):
                 msg += " Item %d of %d" % (counter+1, len(parts))
             if "subtitle" in part:
                 print "Downloading subtitle "+ msg
-                link = constructPlexUrl(part['key'])
+                link = constructPlexDownloadUrl(part['key'])
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,season,episode,eptitle,part),extension=part["container"],overwrite=False):
                     print "Subtitle file not downloaded"
             elif self.transcodeactive=="enable":
@@ -611,7 +611,7 @@ class TvDownloader(object):
                     print "Video file not transcoded"
             else:
                 print "Downloading "+ msg
-                link = constructPlexUrl(part['key'])
+                link = constructPlexDownloadUrl(part['key'])
                 ext = os.path.splitext(part['filename'])[1][1:] #override extension
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,season,episode,eptitle,part),extension=getFilesystemSafeName(ext),overwrite=False):
                     print "Video file not downloaded"
@@ -893,6 +893,13 @@ def constructPlexUrl(key):
     http = unicode(url) + unicode(key)
     if myplexstatus=="enable":
         http +="?X-Plex-Token="+plextoken
+    if debug_plexurl: print http
+    return http
+
+def constructPlexDownloadUrl(key):
+    http = unicode(url) + unicode(key)
+    if myplexstatus=="enable":
+        http +="?download=1&X-Plex-Token="+plextoken
     if debug_plexurl: print http
     return http
 
