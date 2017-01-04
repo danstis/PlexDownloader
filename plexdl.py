@@ -424,8 +424,9 @@ class TvDownloader(object):
                             elif viewcount=="partial":
                                 if verbose: print ("    Episode is {:.0%} < {:.0%} watched... INCLUDING ! ").format(float(viewOffset)/float(duration),minimum_to_watch_to_be_considerd_unwatched)
                             else:
-                                if verbose: print "    Episode is watched... skipping!"
-                                #todo: remove files that are watched when tvtype = all
+                                if verbose: print "    Episode is watched... skipping or deleting if exists!"
+                                parts = getMediaContainerParts(episodekey)
+                                self.remove(title,seasonindex,episodeindex,episodetitle,episodekey,parts)
                                 continue
                         parts = getMediaContainerParts(episodekey)
                         if parts:
@@ -615,6 +616,30 @@ class TvDownloader(object):
                 ext = os.path.splitext(part['filename'])[1][1:] #override extension
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,season,episode,eptitle,part),extension=getFilesystemSafeName(ext),overwrite=False):
                     print "Video file not downloaded"
+
+    def remove(self,itemname,season,episode,eptitle,plexkey,parts):
+        for counter, part in enumerate(parts):
+            eptitle = getFilesystemSafeName(eptitle)
+            msg = itemname + " s"+unicode(season).zfill(2)+"e"+unicode(episode).zfill(2)+"..."
+            if len(parts) > 1:
+                msg += " Item %d of %d" % (counter+1, len(parts))
+            if "subtitle" in part:
+                if os.path.isfile(self.fullfilepath(itemname,season,episode,eptitle,part)+part["container"]):
+                    try:
+                        print "Removing subtitle "+ msg
+                        os.remove(self.fullfilepath(itemname,season,episode,eptitle,part)+part["container"])
+                    except:
+					    print "Could not delete old subtitle. Will try again on the next scan."
+            else:
+                ext = os.path.splitext(part['filename'])[1][1:] #override extension
+                if os.path.isfile(self.fullfilepath(itemname,season,episode,eptitle,part)+"."+getFilesystemSafeName(ext)):
+                    try:
+                        print "Removing "+ msg
+                        os.remove(self.fullfilepath(itemname,season,episode,eptitle,part)+"."+getFilesystemSafeName(ext))
+                    except:
+					    print "Could not delete old episode. Will try again on the next scan."
+                else:
+                    print "File does not exist, skipping."
 
 class MusicDownloader(object):
     class NoConfig(Exception):
