@@ -334,8 +334,9 @@ class TvDownloader(object):
         self.sync = parser.get(cfg, 'fullsync')
         self.active = parser.get(cfg, 'active')
         self.delete = parser.get(cfg, 'autodelete')
-        self.unwatched = parser.get(cfg,'unwatched')
-        self.structure = parser.get(cfg,'folderstructure')
+        self.unwatched = parser.get(cfg, 'unwatched')
+        self.structure = parser.get(cfg, 'folderstructure')
+        self.syncahead = parser.get(cfg, 'syncahead')
         self.exactnamematch = False   #for server mode, filenames must match exactly (except for extension)
         #print "MovieDownloader %d - success" % num
         print "Syncing TV to %s" % (self.location)
@@ -365,6 +366,7 @@ class TvDownloader(object):
             title = re.sub(r'\&','and', title)
             title = title.strip()
             itemkey = geta(item, 'key')
+            unwatchedItems = 0
             #safeitemname = getFilesystemSafeName(title)
             if (title not in skiplist) and ((title in wantedlist) or (self.sync =="enable")):
                 if verbose: print title + " Found in Wanted List"
@@ -421,20 +423,28 @@ class TvDownloader(object):
                         if self.unwatched=="enable":
                             if viewcount=="unwatched":
                                 if verbose: print "    Episode is unwatched..."
+                                unwatchedItems += 1
                             elif viewcount=="partial":
                                 if verbose: print ("    Episode is {:.0%} < {:.0%} watched... INCLUDING ! ").format(float(viewOffset)/float(duration),minimum_to_watch_to_be_considerd_unwatched)
-                            else:
+                                unwatchedItems += 1
+                            elif self.unwatched=="enable" and self.type=="all":
                                 if verbose: print "    Episode is watched... skipping or deleting if exists!"
                                 parts = getMediaContainerParts(episodekey)
                                 self.remove(title,seasonindex,episodeindex,episodetitle,episodekey,parts)
+                                continue
+                            else:
+                                if verbose: print "    Episode is watched... skipping!"
                                 continue
                         parts = getMediaContainerParts(episodekey)
                         if parts:
                             #skip files that already exist
                             parts [:] = [p for p in parts if not self.exists(title,seasonindex,episodeindex,p) ]
                             if parts:
-                                self.download(title,seasonindex,episodeindex,episodetitle,episodekey,parts)
-                                syncedItems += 1
+                                if unwatchedItems < self.syncahead:
+                                    self.download(title,seasonindex,episodeindex,episodetitle,episodekey,parts)
+                                    syncedItems += 1
+                                else:
+                                    if verbose: print "    Sync ahead limit reached... skipping!"
                     except Exception as e:
                         failedItems += 1
                         print "    Error syncing episode.  Skipping..."
