@@ -336,7 +336,7 @@ class TvDownloader(object):
         self.delete = parser.get(cfg, 'autodelete')
         self.unwatched = parser.get(cfg, 'unwatched')
         self.structure = parser.get(cfg, 'folderstructure')
-        self.syncahead = parser.get(cfg, 'syncahead')
+        self.syncahead = int(parser.get(cfg, 'syncahead'))
         self.exactnamematch = False   #for server mode, filenames must match exactly (except for extension)
         #print "MovieDownloader %d - success" % num
         print "Syncing TV to %s" % (self.location)
