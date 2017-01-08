@@ -401,7 +401,7 @@ class TvDownloader(object):
                         seasonindex = geta(episode, 'seasonIndex')  #Added during list creation
                         duration = long(geta(episode, 'duration'))
                         this_minimum_to_watch = long(duration * minimum_to_watch_to_be_considerd_unwatched)
-                        if verbose: print "Analyzing Episode " + episodeindex
+                        if verbose: print "-Analyzing Episode " + episodeindex
                         ## if debug_outputxml: print episode.toprettyxml()
                         ## if verbose: print "    Duration " + str(duration)
                         ## if verbose: print "    Minimum to watch " + str(this_minimum_to_watch)
