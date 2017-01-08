@@ -440,7 +440,7 @@ class TvDownloader(object):
                             #skip files that already exist
                             parts [:] = [p for p in parts if not self.exists(title,seasonindex,episodeindex,p) ]
                             if parts:
-                                if unwatchedItems < self.syncahead:
+                                if unwatchedItems <= self.syncahead:
                                     self.download(title,seasonindex,episodeindex,episodetitle,episodekey,parts)
                                     syncedItems += 1
                                 else:
