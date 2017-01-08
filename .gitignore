@@ -40,6 +40,6 @@
 ehthumbs.db
 Thumbs.db
 
-*.ini
-
-*.txt
+# Other #
+#########
+.vscode
