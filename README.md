@@ -34,10 +34,9 @@ Plex Forum: https://forums.plex.tv/discussion/115593/beta-plex-downloader-deskto
 
 ## Configuration:
 
-1. Rename the user.ini.config to user.ini.
-2. Edit the user.ini with information that is relevant to your install.
-3. If you are downloading/syncing remotely you must enter your myplex information and enable myplex.
-4. Start by running "python plexdl.py".
+1. Edit the user.ini with information that is relevant to your install.
+2. If you are downloading/syncing remotely you must enter your myplex information and enable myplex.
+3. Start by running "python plexdl.py".
 
 ## Find the section ID
 You can find your movie/music/tv/photo section ID by visiting your Plex Web and going to the category you want to sync. Example:
@@ -50,10 +49,6 @@ You can also find your content section ID by visiting:
 ```
 http://localhost:32400/library/sections/
 ```
-
-## Find the transcode profiles
-Transcoder client profiles can be found in the Plex server installed folder \Plex\Plex Media Server\Resources\Profiles.
-Use the file name of the appropriate profile. Default is `HTML TV App`.
 
 ## User.ini
 
