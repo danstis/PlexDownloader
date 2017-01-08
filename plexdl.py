@@ -292,17 +292,17 @@ class MovieDownloader(object):
             if len(parts) > 1:
                 msg += " Item %d of %d" % (counter+1, len(parts))
             if "subtitle" in part:
-                print "Downloading subtitle "+ msg
+                print "    Downloading subtitle "+ msg
                 link = constructPlexDownloadUrl(part['key'])
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,part),extension=part["container"],overwrite=False):
                     print "Subtitle file not downloaded"
             elif self.transcodeactive=="enable":
-                print "Downloading transcoded "+ msg
+                print "    Downloading transcoded "+ msg
                 link = getTranscodeVideoURL(plexkey,self.quality,self.width, self.height, self.bitrate,plexsession,plextoken,counter)
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,part),overwrite=False):
                     print "Video not transcoded"
             else:
-                print "Downloading "+ msg
+                print "    Downloading "+ msg
                 link = constructPlexDownloadUrl(part['key'])
                 ext = os.path.splitext(part['filename'])[1][1:] #override
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,part),extension=getFilesystemSafeName(ext),overwrite=False):
@@ -611,17 +611,17 @@ class TvDownloader(object):
             if len(parts) > 1:
                 msg += " Item %d of %d" % (counter+1, len(parts))
             if "subtitle" in part:
-                print "Downloading subtitle "+ msg
+                print "    Downloading subtitle "+ msg
                 link = constructPlexDownloadUrl(part['key'])
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,season,episode,eptitle,part),extension=part["container"],overwrite=False):
                     print "Subtitle file not downloaded"
             elif self.transcodeactive=="enable":
-                print "Downloading transcoded "+ msg
+                print "    Downloading transcoded "+ msg
                 link = getTranscodeVideoURL(plexkey,self.quality,self.width, self.height, self.bitrate,plexsession,plextoken,counter)
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,season,episode,eptitle,part),overwrite=False):
                     print "Video file not transcoded"
             else:
-                print "Downloading "+ msg
+                print "    Downloading "+ msg
                 link = constructPlexDownloadUrl(part['key'])
                 ext = os.path.splitext(part['filename'])[1][1:] #override extension
                 if not retrieveMediaFile(link, self.fullfilepath(itemname,season,episode,eptitle,part),extension=getFilesystemSafeName(ext),overwrite=False):
@@ -636,20 +636,20 @@ class TvDownloader(object):
             if "subtitle" in part:
                 if os.path.isfile(self.fullfilepath(itemname,season,episode,eptitle,part)+part["container"]):
                     try:
-                        print "Removing subtitle "+ msg
+                        print "    Removing subtitle "+ msg
                         os.remove(self.fullfilepath(itemname,season,episode,eptitle,part)+part["container"])
                     except:
-					    print "Could not delete old subtitle. Will try again on the next scan."
+					    print "    Could not delete old subtitle. Will try again on the next scan."
             else:
                 ext = os.path.splitext(part['filename'])[1][1:] #override extension
                 if os.path.isfile(self.fullfilepath(itemname,season,episode,eptitle,part)+"."+getFilesystemSafeName(ext)):
                     try:
-                        print "Removing "+ msg
+                        print "    Removing "+ msg
                         os.remove(self.fullfilepath(itemname,season,episode,eptitle,part)+"."+getFilesystemSafeName(ext))
                     except:
-					    print "Could not delete old episode. Will try again on the next scan."
+					    print "    Could not delete old episode. Will try again on the next scan."
                 else:
-                    print "File does not exist, skipping."
+                    print "    File does not exist, skipping."
 
 class MusicDownloader(object):
     class NoConfig(Exception):
@@ -768,7 +768,7 @@ class MusicDownloader(object):
             else:
                 msg = cd + " Song: "+song+"..."
             #this is good for both audio files and any future subtitles (future-proof for lyrics)
-            print "Downloading "+ msg
+            print "    Downloading "+ msg
             link = constructPlexUrl(part['key'])
             ext = part['container']  #use whatever the server said it is first
             if not ext: ext = os.path.splitext(part['filename'])[1][1:]
@@ -883,7 +883,7 @@ def retrieveMediaFile(link,filename,extension=None,overwrite=False):
                 extension = "mpg"  #use this as default
         filename=filename+"."+extension.lower()
         #if verbose: print "Downloading "+link+" ==> "+filename
-        if verbose: print "Downloading "+filename
+        if verbose: print "    Downloading "+filename
         if debug_pretenddld: return True
         if overwrite or (not os.path.isfile(filename)):
             #print tell_me_about(filename.encode("utf8"))
