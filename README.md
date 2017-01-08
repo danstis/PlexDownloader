@@ -34,6 +34,7 @@ Plex Forum: https://forums.plex.tv/discussion/115593/beta-plex-downloader-deskto
 
 ## Configuration:
 
+1. Rename the user.ini.config to user.ini.
 1. Edit the user.ini with information that is relevant to your install.
 2. If you are downloading/syncing remotely you must enter your myplex information and enable myplex.
 3. Start by running "python plexdl.py".
@@ -90,7 +91,10 @@ active = enable
 plexid = 4
 # File whose content if the list of the tv shows you want to sync. One tv show per line. Enter exactly how you see it in plex.
 tvfile = tvshows.txt
-# episode|recent|all. Recent will download on the most current season. All will download every season
+# (episode|recent|all):
+# 	Recent - will download on the most current season. 
+# 	All - will download every season. 
+# 	Episode - will keep the 2 most current episodes downloaded.
 tvtype = recent
 # Download location for your synced tvshows
 tvlocation = /Users/plexdl/Downloads/TV Shows/
@@ -100,8 +104,8 @@ fullsync = enable
 autodelete = enable
 # (default | server) Server uses plex server naming convention. For example .../Season X/Show s1e1 - desc.mkv
 folderstructure = server
-# Will download Poster, Fanart, and NFO file (disable | enable)
-metadata = enable
+# Specifies how many unwatched episodes to sync ahead
+syncahead = 3
 
 [movies]
 
