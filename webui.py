@@ -15,6 +15,7 @@ from time import gmtime, strftime
 import shutil
 from myplex import myPlexSignin
 from lib import movieSearch, tvShowSearch, photoSearch, musicSearch
+from version import VERSION
 
 parser = SafeConfigParser()
 parser.read('user.ini')
@@ -63,287 +64,287 @@ pictureunsync = parser.get('pictures', 'deletefiles')
 socket.setdefaulttimeout(30)
 
 urls = (
-	'/', 'index',
-	'/sync', 'sync',
-	'/delete', 'delete',
-        '/force', 'force'
+    '/', 'index',
+    '/sync', 'sync',
+    '/delete', 'delete',
+    '/force', 'force'
 )
 
 
-movielib= []
-moviewanted=[]
+movielib = []
+moviewanted = []
 def movieSearchWeb():
-	movielib[:]=[]
-	moviewanted[:]=[]
-	movieopen = open(moviefile,"r")
-	movieread = movieopen.read()
-	movielist= movieread.split("\n")
-	moviewanted.extend(movielist)
-	movieopen.close()
-	if myplexstatus=="enable":
-		moviehttp=url+"/library/sections/"+movieid+"/all"+"?X-Plex-Token="+plextoken
-	else:
-		moviehttp=url+"/library/sections/"+movieid+"/all"
-	website = urllib.urlopen(moviehttp)
-	xmldoc = minidom.parse(website)
-	movielibrary = xmldoc.getElementsByTagName('Video')
+    movielib[:] = []
+    moviewanted[:] = []
+    movieopen = open(moviefile, "r")
+    movieread = movieopen.read()
+    movielist = movieread.split("\n")
+    moviewanted.extend(movielist)
+    movieopen.close()
+    if myplexstatus == "enable":
+        moviehttp = url+"/library/sections/"+movieid+"/all"+"?X-Plex-Token="+plextoken
+    else:
+        moviehttp = url+"/library/sections/"+movieid+"/all"
+    website = urllib.urlopen(moviehttp)
+    xmldoc = minidom.parse(website)
+    movielibrary = xmldoc.getElementsByTagName('Video')
 
-	for item in movielibrary:
-		moviename= item.attributes['title'].value
-		#moviename = re.sub(r'[^\x00-\x7F]+',' ', moviename)
-		moviename = re.sub(r'\&','and', moviename)
-		try:
-			movieyear = item.attributes['year'].value
-		except:
-			movieyear="Unknown"
-		movielib.append(moviename+" ("+movieyear+")")
+    for item in movielibrary:
+        moviename = item.attributes['title'].value
+        #moviename = re.sub(r'[^\x00-\x7F]+', ' ', moviename)
+        moviename = re.sub(r'\&', 'and', moviename)
+        try:
+            movieyear = item.attributes['year'].value
+        except:
+            movieyear = "Unknown"
+        movielib.append(moviename+" ("+movieyear+")")
 
 musiclib = []
 musicwanted = []
 def musicSearchWeb():
-	musiclib[:]=[]
-	musicwanted[:]=[]
-	musicopen = open(musicfile,"r")
-	musicread = musicopen.read()
-	musiclist= musicread.split("\n")
-	musicwanted.extend(musiclist)
-	musicopen.close()
-	if myplexstatus=="enable":
-		musichttp=url+"/library/sections/"+musicid+"/all"+"?X-Plex-Token="+plextoken
-	else:
-		musichttp=url+"/library/sections/"+musicid+"/all"
-	website = urllib.urlopen(musichttp)
-	xmldoc = minidom.parse(website)
-	#Get list of artists
-	itemlist = xmldoc.getElementsByTagName('Directory')
-	for item in itemlist:
-		artistname= item.attributes['title'].value
-		#artistname = re.sub(r'[^\x00-\x7F]+',' ', artistname)
-		artistname = re.sub(r'\&','and', artistname)
-		musiclib.append(artistname)
+    musiclib[:] = []
+    musicwanted[:] = []
+    musicopen = open(musicfile, "r")
+    musicread = musicopen.read()
+    musiclist = musicread.split("\n")
+    musicwanted.extend(musiclist)
+    musicopen.close()
+    if myplexstatus == "enable":
+        musichttp = url+"/library/sections/"+musicid+"/all"+"?X-Plex-Token="+plextoken
+    else:
+        musichttp = url+"/library/sections/"+musicid+"/all"
+    website = urllib.urlopen(musichttp)
+    xmldoc = minidom.parse(website)
+    #Get list of artists
+    itemlist = xmldoc.getElementsByTagName('Directory')
+    for item in itemlist:
+        artistname = item.attributes['title'].value
+        #artistname = re.sub(r'[^\x00-\x7F]+', ' ', artistname)
+        artistname = re.sub(r'\&', 'and', artistname)
+        musiclib.append(artistname)
 
-albumlib=[]
-albumwanted=[]
+albumlib = []
+albumwanted = []
 def photoSearchWeb():
-	albumlib[:]=[]
-	albumwanted[:]=[]
-	pictureopen = open(picturefile,"r")
-	pictureread = pictureopen.read()
-	picturelist= pictureread.split("\n")
-	albumwanted.extend(picturelist)
-	pictureopen.close()
+    albumlib[:] = []
+    albumwanted[:] = []
+    pictureopen = open(picturefile, "r")
+    pictureread = pictureopen.read()
+    picturelist = pictureread.split("\n")
+    albumwanted.extend(picturelist)
+    pictureopen.close()
 
-	if myplexstatus=="enable":
-		pichttp=url+"/library/sections/"+pictureid+"/all"+"?X-Plex-Token="+plextoken
-	else:
-		pichttp=url+"/library/sections/"+pictureid+"/all"
-	website = urllib.urlopen(pichttp)
-	xmldoc = minidom.parse(website)
-	itemlist = xmldoc.getElementsByTagName('Directory')
-	for item in itemlist:
-		albumtitle = item.attributes['title'].value
-		#albumtitle = re.sub(r'[^\x00-\x7F]+',' ', albumtitle)
-		albumtitle = re.sub(r'\&','and', albumtitle)
-		albumlib.append(albumtitle)
+    if myplexstatus == "enable":
+        pichttp = url+"/library/sections/"+pictureid+"/all"+"?X-Plex-Token="+plextoken
+    else:
+        pichttp = url+"/library/sections/"+pictureid+"/all"
+    website = urllib.urlopen(pichttp)
+    xmldoc = minidom.parse(website)
+    itemlist = xmldoc.getElementsByTagName('Directory')
+    for item in itemlist:
+        albumtitle = item.attributes['title'].value
+        #albumtitle = re.sub(r'[^\x00-\x7F]+', ' ', albumtitle)
+        albumtitle = re.sub(r'\&', 'and', albumtitle)
+        albumlib.append(albumtitle)
 
-tvlib=[]
-tvwanted=[]
+tvlib = []
+tvwanted = []
 def tvShowSearchWeb():
-	tvlib[:]=[]
-	tvwanted[:]=[]
-	tvopen = open(tvfile,"r")
-	tvread = tvopen.read()
-	tvlist= tvread.split("\n")
-	tvwanted.extend(tvlist)
-	tvopen.close()
-	if myplexstatus=="enable":
-		tvhttp=url+"/library/sections/"+tvshowid+"/all"+"?X-Plex-Token="+plextoken
-	else:
-		tvhttp=url+"/library/sections/"+tvshowid+"/all"
+    tvlib[:] = []
+    tvwanted[:] = []
+    tvopen = open(tvfile, "r")
+    tvread = tvopen.read()
+    tvlist = tvread.split("\n")
+    tvwanted.extend(tvlist)
+    tvopen.close()
+    if myplexstatus == "enable":
+        tvhttp = url+"/library/sections/"+tvshowid+"/all"+"?X-Plex-Token="+plextoken
+    else:
+        tvhttp = url+"/library/sections/"+tvshowid+"/all"
 
-	website = urllib.urlopen(tvhttp)
-	xmldoc = minidom.parse(website)
-	itemlist = xmldoc.getElementsByTagName('Directory')
-	for item in itemlist:
-		tvtitle = item.attributes['title'].value
-		#tvtitle = re.sub(r'[^\x00-\x7F]+',' ', tvtitle)
-		tvtitle = re.sub(r'\&','and', tvtitle)
-		tvlib.append(tvtitle)
+    website = urllib.urlopen(tvhttp)
+    xmldoc = minidom.parse(website)
+    itemlist = xmldoc.getElementsByTagName('Directory')
+    for item in itemlist:
+        tvtitle = item.attributes['title'].value
+        #tvtitle = re.sub(r'[^\x00-\x7F]+', ' ', tvtitle)
+        tvtitle = re.sub(r'\&', 'and', tvtitle)
+        tvlib.append(tvtitle)
 
-if myplexstatus=="enable":
-	plextoken = myPlexSignin(myplexusername,myplexpassword)
-if myplexstatus=="enable" and plextoken=="":
-	print "Failed to login to myPlex. Please disable myPlex or enter your correct login."
-	exit()
-if tvactive=="enable":
-	tvShowSearchWeb()
-if movieactive=="enable":
-	movieSearchWeb()
-if pictureactive=="enable":
-	photoSearchWeb()
-if musicactive=="enable":
-	musicSearchWeb()
+if myplexstatus == "enable":
+    plextoken = myPlexSignin(myplexusername, myplexpassword)
+if myplexstatus == "enable" and plextoken == "":
+    print "Failed to login to myPlex. Please disable myPlex or enter your correct login."
+    exit()
+if tvactive == "enable":
+    tvShowSearchWeb()
+if movieactive == "enable":
+    movieSearchWeb()
+if pictureactive == "enable":
+    photoSearchWeb()
+if musicactive == "enable":
+    musicSearchWeb()
 
 
 class index:
-	def __init__(self):
-		self.render = web.template.render('templates')
+    def __init__(self):
+        self.render = web.template.render('templates')
 
-	def GET(self):
-		return self.render.index(movielib,moviewanted,tvlib,tvwanted,musiclib,musicwanted,albumlib,albumwanted,url)
+    def GET(self):
+        return self.render.index(movielib, moviewanted, tvlib, tvwanted, musiclib, musicwanted, albumlib, albumwanted, url, VERSION)
 
-	def POST(self):
-		data = web.data()
-		return data
+    def POST(self):
+        data = web.data()
+        return data
 class force:
-	def GET(self):
-		data = web.input()
-		contype = data['type']
-		if contype=="tvshow":
-                        print "Force Searching TV Shows..."
-			tvShowSearch()
-			raise web.seeother('/')
-		elif contype=="movie":
-                        print "Force Searching Movies..."
-			movieSearch()
-			raise web.seeother('/')
-		elif contype=="music":
-                        print "Force Searching Music..."
-			musicSearch()
-			raise web.seeother('/')
-		elif contype=="picture":
-                        print "Force Searching Pictures..."
-			photoSearch()
-			raise web.seeother('/')
+    def GET(self):
+        data = web.input()
+        contype = data['type']
+        if contype == "tvshow":
+            print "Force Searching TV Shows..."
+            tvShowSearch()
+            raise web.seeother('/')
+        elif contype == "movie":
+            print "Force Searching Movies..."
+            movieSearch()
+            raise web.seeother('/')
+        elif contype == "music":
+            print "Force Searching Music..."
+            musicSearch()
+            raise web.seeother('/')
+        elif contype == "picture":
+            print "Force Searching Pictures..."
+            photoSearch()
+            raise web.seeother('/')
 
 class sync:
-	def GET(self):
-		data = web.input()
-		contype = data['type']
-		content = data['content'].encode('utf8')
-		if contype=="tvshow":
-			tvopen = open(tvfile,"a")
-			tvread = tvopen.write(content+"\n")
-			tvopen.close()
-			tvShowSearchWeb()
-			raise web.seeother('/')
-		elif contype=="movie":
-			movieopen = open(moviefile,"a")
-			movieread = movieopen.write(content+"\n")
-			movieopen.close()
-			movieSearchWeb()
-			raise web.seeother('/')
-		elif contype=="music":
-			musicopen = open(musicfile,"a")
-			musicread = musicopen.write(content+"\n")
-			musicopen.close()
-			musicSearchWeb()
-			raise web.seeother('/')
-		elif contype=="picture":
-			pictureopen = open(picturefile,"a")
-			pictureread = pictureopen.write(content+"\n")
-			pictureopen.close()
-			photoSearchWeb()
-			raise web.seeother('/')
+    def GET(self):
+        data = web.input()
+        contype = data['type']
+        content = data['content'].encode('utf8')
+        if contype == "tvshow":
+            tvopen = open(tvfile, "a")
+            tvread = tvopen.write(content+"\n")
+            tvopen.close()
+            tvShowSearchWeb()
+            raise web.seeother('/')
+        elif contype == "movie":
+            movieopen = open(moviefile, "a")
+            movieread = movieopen.write(content+"\n")
+            movieopen.close()
+            movieSearchWeb()
+            raise web.seeother('/')
+        elif contype == "music":
+            musicopen = open(musicfile, "a")
+            musicread = musicopen.write(content+"\n")
+            musicopen.close()
+            musicSearchWeb()
+            raise web.seeother('/')
+        elif contype == "picture":
+            pictureopen = open(picturefile, "a")
+            pictureread = pictureopen.write(content+"\n")
+            pictureopen.close()
+            photoSearchWeb()
+            raise web.seeother('/')
 
 class delete:
-	def GET(self):
-		data = web.input()
-		contype = data['type']
-		content = data['content'].encode('utf8')
-		if contype=="tvshow":
-			tvopen = open(tvfile,"r")
-			tvread = tvopen.read()
-			tvlist= tvread.split("\n")
-			if content in tvlist:
-				tvlist.remove(content)
-			while '' in tvlist:
-				tvlist.remove('')
-			tvopen.close()
-			tvopen = open(tvfile,"w+")
-			for item in tvlist:
-				tvwrite = tvopen.write(item+"\n")
-			tvopen.close()
-			if tvunsync == "enable":
-                            try:
-                                shutil.rmtree(tvlocation + content)
-                                print "Successfully deleted " + str(content)+ " from filesystem."
-                            except:
-                                print "Unable to delete tv show from filesystem. Check Permissions."
-                        elif tvunsync == "disable":
-                            print "Successfully removed from sync queue. Not deleting from filesystem due to settings."
-			tvShowSearchWeb()
-			raise web.seeother('/')
-		elif contype=="movie":
-			movieopen = open(moviefile,"r")
-			movieread = movieopen.read()
-			movielist= movieread.split("\n")
-			if content in movielist:
-				movielist.remove(content)
-			while '' in movielist:
-				movielist.remove('')
-			movieopen.close()
-			movieopen = open(moviefile,"w+")
-			for item in movielist:
-				moviewrite = movieopen.write(item+"\n")
-			movieopen.close()
-			if movieunsync == "enable":
-                            try:
-                                shutil.rmtree(movielocation + content)
-                                print "Successfully deleted " + str(content)+ " from filesystem."
-                            except:
-                                print "Unable to delete movie from filesystem. Check Permissions."
-                        elif movieunsync == "disable":
-                            print "Successfully removed from sync queue. Not deleting from filesystem due to settings."
-			movieSearchWeb()
-			raise web.seeother('/')
-		elif contype=="music":
-			musicopen = open(musicfile,"r")
-			musicread = musicopen.read()
-			musiclist= musicread.split("\n")
-			if content in musiclist:
-				musiclist.remove(content)
-			while '' in musiclist:
-				musiclist.remove('')
-			musicopen.close()
-			musicopen = open(musicfile,"w+")
-			for item in musiclist:
-				musicwrite = musicopen.write(item+"\n")
-			musicopen.close()
-			if musicunsync == "enable":
-                            try:
-                                shutil.rmtree(musiclocation + content)
-                                print "Successfully deleted " + str(content)+ " from filesystem."
-                            except:
-                                print "Unable to delete music from filesystem. Check Permissions."
-                        elif musicunsync == "disable":
-                            print "Successfully removed from sync queue. Not deleting from filesystem due to settings."
-			musicSearchWeb()
-			raise web.seeother('/')
-		elif contype=="picture":
-			pictureopen = open(picturefile,"r")
-			pictureread = pictureopen.read()
-			picturelist= pictureread.split("\n")
-			if content in picturelist:
-				picturelist.remove(content)
-			while '' in picturelist:
-				picturelist.remove('')
-			pictureopen.close()
-			pictureopen = open(picturefile,"w+")
-			for item in picturelist:
-				picturewrite = pictureopen.write(item+"\n")
-			pictureopen.close()
-			if pictureunsync == "enable":
-                            try:
-                                shutil.rmtree(picturelocation + content)
-                                print "Successfully deleted " + str(content)+ " from filesystem."
-                            except:
-                                print "Unable to delete pictures from filesystem. Check Permissions."
-                        elif pictureunsync == "disable":
-                            print "Successfully removed from sync queue. Not deleting from filesystem due to settings."
-			photoSearchWeb()
-			raise web.seeother('/')
+    def GET(self):
+        data = web.input()
+        contype = data['type']
+        content = data['content'].encode('utf8')
+        if contype == "tvshow":
+            tvopen = open(tvfile, "r")
+            tvread = tvopen.read()
+            tvlist = tvread.split("\n")
+            if content in tvlist:
+                tvlist.remove(content)
+            while '' in tvlist:
+                tvlist.remove('')
+            tvopen.close()
+            tvopen = open(tvfile, "w+")
+            for item in tvlist:
+                tvwrite = tvopen.write(item+"\n")
+            tvopen.close()
+            if tvunsync == "enable":
+                try:
+                    shutil.rmtree(tvlocation + content)
+                    print "Successfully deleted " + str(content)+ " from filesystem."
+                except:
+                    print "Unable to delete tv show from filesystem. Check Permissions."
+            elif tvunsync == "disable":
+                print "Successfully removed from sync queue. Not deleting from filesystem due to settings."
+                tvShowSearchWeb()
+                raise web.seeother('/')
+        elif contype == "movie":
+            movieopen = open(moviefile, "r")
+            movieread = movieopen.read()
+            movielist = movieread.split("\n")
+            if content in movielist:
+                movielist.remove(content)
+            while '' in movielist:
+                movielist.remove('')
+            movieopen.close()
+            movieopen = open(moviefile, "w+")
+            for item in movielist:
+                moviewrite = movieopen.write(item+"\n")
+            movieopen.close()
+            if movieunsync == "enable":
+                try:
+                    shutil.rmtree(movielocation + content)
+                    print "Successfully deleted " + str(content)+ " from filesystem."
+                except:
+                    print "Unable to delete movie from filesystem. Check Permissions."
+            elif movieunsync == "disable":
+                print "Successfully removed from sync queue. Not deleting from filesystem due to settings."
+                movieSearchWeb()
+                raise web.seeother('/')
+        elif contype == "music":
+            musicopen = open(musicfile, "r")
+            musicread = musicopen.read()
+            musiclist = musicread.split("\n")
+            if content in musiclist:
+                musiclist.remove(content)
+            while '' in musiclist:
+                musiclist.remove('')
+            musicopen.close()
+            musicopen = open(musicfile, "w+")
+            for item in musiclist:
+                musicwrite = musicopen.write(item+"\n")
+            musicopen.close()
+            if musicunsync == "enable":
+                try:
+                    shutil.rmtree(musiclocation + content)
+                    print "Successfully deleted " + str(content)+ " from filesystem."
+                except:
+                    print "Unable to delete music from filesystem. Check Permissions."
+            elif musicunsync == "disable":
+                print "Successfully removed from sync queue. Not deleting from filesystem due to settings."
+                musicSearchWeb()
+                raise web.seeother('/')
+        elif contype == "picture":
+            pictureopen = open(picturefile, "r")
+            pictureread = pictureopen.read()
+            picturelist = pictureread.split("\n")
+            if content in picturelist:
+                picturelist.remove(content)
+            while '' in picturelist:
+                picturelist.remove('')
+            pictureopen.close()
+            pictureopen = open(picturefile, "w+")
+            for item in picturelist:
+                picturewrite = pictureopen.write(item+"\n")
+            pictureopen.close()
+            if pictureunsync == "enable":
+                try:
+                    shutil.rmtree(picturelocation + content)
+                    print "Successfully deleted " + str(content)+ " from filesystem."
+                except:
+                    print "Unable to delete pictures from filesystem. Check Permissions."
+            elif pictureunsync == "disable":
+                print "Successfully removed from sync queue. Not deleting from filesystem due to settings."
+                photoSearchWeb()
+                raise web.seeother('/')
 
 if __name__ == "__main__":
-	app = web.application(urls, globals())
-	app.run()
+    app = web.application(urls, globals())
+    app.run()

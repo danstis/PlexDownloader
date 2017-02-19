@@ -35,6 +35,7 @@ from time import gmtime, strftime
 import random
 import string
 from myplex import myPlexSignin
+from version import VERSION
 
 parser = SafeConfigParser()
 parser.read('user.ini')
@@ -99,7 +100,7 @@ socket.setdefaulttimeout(180)
 
 plextoken=""
 
-print "PlexScraper - v0.01"
+print "PlexScraper - " + VERSION
 
 #Itemfile is list of shows to include/exclude.  Exclude by adding a "!" at beginning of show name.
 #Any blank line or line beginning with a hash mark are ignored.

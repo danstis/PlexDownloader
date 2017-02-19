@@ -1,4 +1,4 @@
-$def with (movielib,moviewanted,tvlib,tvwanted,musiclib,musicwanted,albumlib,albumwanted,url)
+$def with (movielib,moviewanted,tvlib,tvwanted,musiclib,musicwanted,albumlib,albumwanted,url,VERSION)
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -45,7 +45,7 @@ $def with (movielib,moviewanted,tvlib,tvwanted,musiclib,musicwanted,albumlib,alb
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Plex Downloader v0.04</a>
+          <a class="navbar-brand" href="#">Plex Downloader $(VERSION)</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -71,7 +71,7 @@ $def with (movielib,moviewanted,tvlib,tvwanted,musiclib,musicwanted,albumlib,alb
       <div class="col-sm-6 col-lg-3">
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">Movies</h3>
+              <h3 class="panel-title"><a name="movies">Movies</a></h3>
             </div>
             <div class="panel-body">
               $if (len(moviewanted)==0):
@@ -110,7 +110,7 @@ $def with (movielib,moviewanted,tvlib,tvwanted,musiclib,musicwanted,albumlib,alb
       <div class="col-sm-6 col-lg-3">
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">TV Shows</h3>
+              <h3 class="panel-title"><a name="tv">TV Shows</a></h3>
             </div>
             <div class="panel-body">
               $if (len(tvwanted)==0):
@@ -149,7 +149,7 @@ $def with (movielib,moviewanted,tvlib,tvwanted,musiclib,musicwanted,albumlib,alb
       <div class="col-sm-6 col-lg-3">
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">Music</h3>
+              <h3 class="panel-title"><a name="music">Music</a></h3>
             </div>
             <div class="panel-body">
               $if (len(musicwanted)==0):
@@ -188,7 +188,7 @@ $def with (movielib,moviewanted,tvlib,tvwanted,musiclib,musicwanted,albumlib,alb
       <div class="col-sm-6 col-lg-3">
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">Pictures</h3>
+              <h3 class="panel-title"><a name="pictures">Pictures</a></h3>
             </div>
             <div class="panel-body">
               $if (len(albumwanted)==0):
@@ -226,7 +226,7 @@ $def with (movielib,moviewanted,tvlib,tvwanted,musiclib,musicwanted,albumlib,alb
       </div>
     </div>
 
-  
+
 
 
     </div> <!-- /container -->
@@ -237,6 +237,6 @@ $def with (movielib,moviewanted,tvlib,tvwanted,musiclib,musicwanted,albumlib,alb
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="/static//bootstrap.min.js"></script>
-    <script src="/static/docs.min.js"></script>
+    <!--<script src="/static/docs.min.js"></script>-->
   </body>
 </html>
