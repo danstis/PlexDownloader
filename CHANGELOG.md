@@ -18,12 +18,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Fix Plex server path in README.
+- Removed leftover bootstrap docs js file in web template.
 
 ### Removed
 - Remove user.ini file from repo.
 
-## 0.04 - 2015-08-05
-### Added
-- Base version of code forked from [ilyaz/PlexDownloader](https://github.com/ilyaz/PlexDownloader)
+## [v0.7.0] - 2015-07-20
 
-[Unreleased]: https://github.com/danstis/PlexDownloader/compare/0.04...HEAD
+## [v0.6.0] - 2015-07-15
+
+## [v0.5.0] - 2015-07-11
+
+## [v0.4.0] - 2015-03-28
+
+## [v0.3.0] - 2014-08-12
+
+## [v0.2.0] - 2014-07-30
+
+## v0.1.0 - 2014-07-28
+
+[Unreleased]: https://github.com/danstis/PlexDownloader/compare/v0.7.0...HEAD
+[v0.7.0]: https://github.com/danstis/PlexDownloader/compare/v0.6.0...v0.7.0
+[v0.6.0]: https://github.com/danstis/PlexDownloader/compare/v0.5.0...v0.6.0
+[v0.5.0]: https://github.com/danstis/PlexDownloader/compare/v0.4.0...v0.5.0
+[v0.4.0]: https://github.com/danstis/PlexDownloader/compare/v0.3.0...v0.4.0
+[v0.3.0]: https://github.com/danstis/PlexDownloader/compare/v0.2.0...v0.3.0
+[v0.2.0]: https://github.com/danstis/PlexDownloader/compare/v0.1.0...v0.2.0
