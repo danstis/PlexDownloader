@@ -42,7 +42,7 @@ Plex Forum: https://forums.plex.tv/discussion/115593/beta-plex-downloader-deskto
 ## Find the section ID
 You can find your movie/music/tv/photo section ID by visiting your Plex Web and going to the category you want to sync. Example:
 ```
-http://192.168.3.5/web/index.html#!/server/.../section/2
+http://localhost:32400/web/index.html#!/server/.../section/2
 ```
 The ID you are looking for is the number at the end which in the above example is 2.
 
