@@ -14,7 +14,7 @@ import platform
 from time import gmtime, strftime
 import shutil
 from myplex import myPlexSignin
-from lib import movieSearch,tvShowSearch,photoSearch,musicSearch
+from lib import movieSearch, tvShowSearch, photoSearch, musicSearch
 
 parser = SafeConfigParser()
 parser.read('user.ini')

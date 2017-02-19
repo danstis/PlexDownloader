@@ -20,7 +20,7 @@ parser.read('user.ini')
 myplexstatus = parser.get('myplex', 'status')
 myplexusername = parser.get('myplex', 'username')
 myplexpassword = parser.get('myplex', 'password')
-myplexshared = parser.get('myplex','shared')
+myplexshared = parser.get('myplex', 'shared')
 
 def myPlexSignin(username,password):
 	try:
