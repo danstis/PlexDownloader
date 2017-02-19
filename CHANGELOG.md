@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+<!--## [Unreleased]
+### Added-->
+
+## [v0.8.0] - 2017-02-19
 ### Added
 - .editorconfig to ensure coding styles are kept the same. [editorconfig](http://editorconfig.org/)
 - This CHANGELOG file.
@@ -16,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Changed logging format to a nicer layout.
 - Paths in default user.ini changed to Windows paths.
 - Update plexdl.py, webui.py to conform to python coding standards.
+- Version numbers displayed now come from a shared version file (version.py).
 
 ### Fixed
 - Fix Plex server path in README.
@@ -38,7 +42,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## v0.1.0 - 2014-07-28
 
-[Unreleased]: https://github.com/danstis/PlexDownloader/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/danstis/PlexDownloader/compare/v0.8.0...HEAD
+[v0.8.0]: https://github.com/danstis/PlexDownloader/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://github.com/danstis/PlexDownloader/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://github.com/danstis/PlexDownloader/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://github.com/danstis/PlexDownloader/compare/v0.4.0...v0.5.0
