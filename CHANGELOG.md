@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Changed logging format to a nicer layout.
 - Paths in default user.ini changed to Windows paths.
+- Update plexdl.py, webui.py to conform to python coding standards.
 
 ### Fixed
 - Fix Plex server path in README.
