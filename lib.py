@@ -91,7 +91,11 @@ pictureactive = parser.get('pictures', 'active')
 plexsession=str(uuid.uuid4())
 socket.setdefaulttimeout(180)
 
-plextoken=""
+if myplexstatus == "enable":
+    plextoken = myPlexSignin(myplexusername, myplexpassword)
+else:
+    plextoken = ""
+
 def mvTranscoder(moviefull,container,link,moviemetadata):
 	container = "mp4"
 	clientuid = uuid.uuid4()
@@ -112,17 +116,17 @@ def mvTranscoder(moviefull,container,link,moviemetadata):
 		print "Transcode URL: "+link
 	mvfile=urllib.URLopener()
 	moviefull = re.sub(r'[\\/:"*?<>|"]+',"",moviefull)
-	if not os.path.exists(movielocation+moviefull):
-		os.makedirs(movielocation+moviefull)
+	if not os.path.exists(movielocation+"/"+moviefull):
+		os.makedirs(movielocation+"/"+moviefull)
 
 	print "Downloading transcoded "+ moviefull + "..."
 
-	if not os.path.isfile(movielocation+moviefull+"/"+moviefull+"."+container):
+	if not os.path.isfile(movielocation+"/"+moviefull+"/"+moviefull+"."+container):
 		try:
-			mvfile.retrieve(link,movielocation+moviefull+"/"+moviefull+"."+container)
+			mvfile.retrieve(link,movielocation+"/"+moviefull+"/"+moviefull+"."+container)
 		except:
 			print "Something went wrong transcoding this movie... Deleting and retrying on next movie scan!"
-			os.remove(movielocation+moviefull+"/"+moviefull+"."+container)
+			os.remove(movielocation+"/"+moviefull+"/"+moviefull+"."+container)
 	else:
 		print "File already exists. Skipping movie transcode."
 
@@ -148,17 +152,17 @@ def tvTranscoder(show,season,episode,container,link,eptitle,tvmetadata):
 	epfile=urllib.URLopener()
 	show = re.sub(r'[\\/:"*?<>|"]+',"",show)
 	eptitle = re.sub(r'[\\/:"*?<>|"]+',"",eptitle)
-	if not os.path.exists(tvlocation+show):
-		os.makedirs(tvlocation+show)
+	if not os.path.exists(tvlocation+"/"+show):
+		os.makedirs(tvlocation+"/"+show)
 
 	print "Downloading transcoded "+ show + " Season "+season+" Episode "+episode+"..."
 
-	if not os.path.isfile(tvlocation+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container):
+	if not os.path.isfile(tvlocation+"/"+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container):
 		try:
-			epfile.retrieve(link,tvlocation+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container)
+			epfile.retrieve(link,tvlocation+"/"+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container)
 		except:
 			print "Something went wrong transcoding this episode... Deleting and retrying on next episode scan!"
-			os.remove(tvlocation+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container)
+			os.remove(tvlocation+"/"+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container)
 	else:
 		print "File already exists. Skipping episode transcode."
 
@@ -166,34 +170,34 @@ def epDownloader(show,season,episode,container,link,eptitle):
 	epfile=urllib.URLopener()
 	show = re.sub(r'[\\/:"*?<>|"]+',"",show)
 	eptitle = re.sub(r'[\\/:"*?<>|"]+',"",eptitle)
-	if not os.path.exists(tvlocation+show):
-		os.makedirs(tvlocation+show)
+	if not os.path.exists(tvlocation+"/"+show):
+		os.makedirs(tvlocation+"/"+show)
 
 	print "Downloading "+ show + " Season "+season+" Episode "+episode+"..."
 
-	if not os.path.isfile(tvlocation+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container):
+	if not os.path.isfile(tvlocation+"/"+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container):
 		try:
-			epfile.retrieve(link,tvlocation+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container)
+			epfile.retrieve(link,tvlocation+"/"+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container)
 		except:
 			print "Something went wrong downloading this episode... Deleting and retrying on next episode scan!"
-			os.remove(tvlocation+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container)
+			os.remove(tvlocation+"/"+show+"/"+show+" - "+season+"x"+episode+" - "+eptitle+"."+container)
 	else:
 		print "File already exists. Skipping episode."
 
 def mvDownloader(moviefull,container,link):
 	mvfile=urllib.URLopener()
 	moviefull = re.sub(r'[\\/:"*?<>|"]+',"",moviefull)
-	if not os.path.exists(movielocation+moviefull):
-		os.makedirs(movielocation+moviefull)
+	if not os.path.exists(movielocation+"/"+moviefull):
+		os.makedirs(movielocation+"/"+moviefull)
 
 	print "Downloading "+ moviefull + "..."
 
-	if not os.path.isfile(movielocation+moviefull+"/"+moviefull+"."+container):
+	if not os.path.isfile(movielocation+"/"+moviefull+"/"+moviefull+"."+container):
 		try:
-			mvfile.retrieve(link,movielocation+moviefull+"/"+moviefull+"."+container)
+			mvfile.retrieve(link,movielocation+"/"+moviefull+"/"+moviefull+"."+container)
 		except:
 			print "Something went wrong downloading this movie... Deleting and retrying on next movie scan!"
-			os.remove(movielocation+moviefull+"/"+moviefull+"."+container)
+			os.remove(movielocation+"/"+moviefull+"/"+moviefull+"."+container)
 	else:
 		print "File already exists. Skipping movie."
 
@@ -202,17 +206,17 @@ def photoDownloader(albumname,picturename,link,container):
 	albumname = re.sub(r'[\\/:"*?<>|"]+',"",albumname)
 	picturename = re.sub(r'[\\/:"*?<>|"]+',"",picturename)
 
-	if not os.path.exists(picturelocation+albumname):
-		os.makedirs(picturelocation+albumname)
+	if not os.path.exists(picturelocation+"/"+albumname):
+		os.makedirs(picturelocation+"/"+albumname)
 
 	print "Downloading Album: "+ albumname + " Picture: " +picturename +" ..."
 
-	if not os.path.isfile(picturelocation+albumname+"/"+picturename+"."+container):
+	if not os.path.isfile(picturelocation+"/"+albumname+"/"+picturename+"."+container):
 		try:
-			photofile.retrieve(link,picturelocation+albumname+"/"+picturename+"."+container)
+			photofile.retrieve(link,picturelocation+"/"+albumname+"/"+picturename+"."+container)
 		except:
 			print "Something went wrong downloading this picture... Deleting and retrying on next picture scan!"
-			os.remove(picturelocation+albumname+"/"+picturename+"."+container)
+			os.remove(picturelocation+"/"+albumname+"/"+picturename+"."+container)
 	else:
 		print "File already exists. Skipping picture."
 
@@ -224,18 +228,18 @@ def songDownloader(artist,cd,song,link,container):
 	song = re.sub(r'[\\/:"*?<>|"]+',"",song)
 
 
-	if not os.path.exists(musiclocation+artist):
-		os.makedirs(musiclocation+artist)
-	if not os.path.exists(musiclocation+artist+"/"+cd):
-		os.makedirs(musiclocation+artist+"/"+cd)
+	if not os.path.exists(musiclocation+"/"+artist):
+		os.makedirs(musiclocation+"/"+artist)
+	if not os.path.exists(musiclocation+"/"+artist+"/"+cd):
+		os.makedirs(musiclocation+"/"+artist+"/"+cd)
 	print "Downloading CD: "+ cd + " Song: "+song+  "..."
 
-	if not os.path.isfile(musiclocation+artist+"/"+cd+"/"+song+"."+container):
+	if not os.path.isfile(musiclocation+"/"+artist+"/"+cd+"/"+song+"."+container):
 		try:
-			musicfile.retrieve(link,musiclocation+artist+"/"+cd+"/"+song+"."+container)
+			musicfile.retrieve(link,musiclocation+"/"+artist+"/"+cd+"/"+song+"."+container)
 		except:
 			print "Something went wrong downloading this song... Deleting and retrying on next music scan!"
-			os.remove(musiclocation+artist+"/"+cd+"/"+song+"."+container)
+			os.remove(musiclocation+"/"+artist+"/"+cd+"/"+song+"."+container)
 	else:
 		print "Song already exists. Skipping song."
 
@@ -362,10 +366,10 @@ def tvShowSearch():
 								else:
 									epDownloader(tvtitle,seasonindex,episodeindex,downloadcontainer,eplink,episodetitle)
 							elif (tvdelete=="enable"):
-								if os.path.isfile(tvlocation+tvtitle+"/"+tvtitle+" - "+seasonindex+"x"+episodeindex+" - "+episodetitle+"."+downloadcontainer):
+								if os.path.isfile(tvlocation+"/"+tvtitle+"/"+tvtitle+" - "+seasonindex+"x"+episodeindex+" - "+episodetitle+"."+downloadcontainer):
 									try:
 										print "Deleting old episode: Season "+str(seasonindex)+" Episode "+str(episodeindex)
-										os.remove(tvlocation+tvtitle+"/"+tvtitle+" - "+seasonindex+"x"+episodeindex+" - "+episodetitle+"."+downloadcontainer)
+										os.remove(tvlocation+"/"+tvtitle+"/"+tvtitle+" - "+seasonindex+"x"+episodeindex+" - "+episodetitle+"."+downloadcontainer)
 									except:
 										print "Could not delete old episode. Will try again on the next scan."
 								else:
