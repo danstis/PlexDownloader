@@ -98,6 +98,8 @@ def movieSearchWeb():
         except:
             movieyear = "Unknown"
         movielib.append(moviename+" ("+movieyear+")")
+    moviewanted.sort()
+    movielib.sort()
 
 musiclib = []
 musicwanted = []
@@ -122,6 +124,8 @@ def musicSearchWeb():
         #artistname = re.sub(r'[^\x00-\x7F]+', ' ', artistname)
         artistname = re.sub(r'\&', 'and', artistname)
         musiclib.append(artistname)
+    musiclib.sort()
+    musicwanted.sort()
 
 albumlib = []
 albumwanted = []
@@ -146,6 +150,8 @@ def photoSearchWeb():
         #albumtitle = re.sub(r'[^\x00-\x7F]+', ' ', albumtitle)
         albumtitle = re.sub(r'\&', 'and', albumtitle)
         albumlib.append(albumtitle)
+    albumlib.sort()
+    albumwanted.sort()
 
 tvlib = []
 tvwanted = []
@@ -170,6 +176,8 @@ def tvShowSearchWeb():
         #tvtitle = re.sub(r'[^\x00-\x7F]+', ' ', tvtitle)
         tvtitle = re.sub(r'\&', 'and', tvtitle)
         tvlib.append(tvtitle)
+    tvlib.sort()
+    tvwanted.sort()
 
 if myplexstatus == "enable":
     plextoken = myPlexSignin(myplexusername, myplexpassword)
