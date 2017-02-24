@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-<!--## [Unreleased]
-### Added-->
+## [Unreleased]
+### Changed
+- Web interface external links open in new browser tab.
+- Web interface lists are sorted alphabetically.
+
 
 ## [v0.8.0] - 2017-02-19
 ### Added
