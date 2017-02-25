@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-import web
-from xml.dom import minidom
-import urllib
-import os
-import time
 from ConfigParser import SafeConfigParser
-import re
-import socket
-from urllib2 import Request, urlopen, quote
-import base64
-import uuid
-import platform
 from time import gmtime, strftime
+from urllib2 import Request, urlopen, quote
+from xml.dom import minidom
+import base64
+import os
+import platform
+import re
 import shutil
-from myplex import myPlexSignin
+import socket
+import time
+import urllib
+import uuid
+import web
+
 from lib import movieSearch, tvShowSearch, photoSearch, musicSearch
+from myplex import myPlexSignin
 from version import VERSION
 
 parser = SafeConfigParser()

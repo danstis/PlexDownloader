@@ -1,18 +1,12 @@
-from xml.dom import minidom
-import urllib
-import os
-import time
-import hashlib
 from ConfigParser import SafeConfigParser
-import re
-import socket
 from urllib2 import Request, urlopen, quote
 import base64
-import uuid
+import os
 import platform
-from time import gmtime, strftime
-import random
-import string
+import re
+import socket
+import urllib
+import uuid
 
 parser = SafeConfigParser()
 parser.read('user.ini')
