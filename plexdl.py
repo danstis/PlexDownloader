@@ -20,21 +20,23 @@
 #
 
 from __future__ import unicode_literals
-from xml.dom import minidom
-import urllib
-import os
-import time
 from ConfigParser import SafeConfigParser
+from time import gmtime, strftime
+from xml.dom import minidom
+import codecs
+import os
+import random
 import re
 import socket
-#from urllib2 import Request, urlopen, quote
+import string
+import sys
+import time
+import traceback
+import urllib
 import urllib2
 import uuid
-from time import gmtime, strftime
-import random
-import string
+
 from myplex import myPlexSignin
-import traceback, sys, codecs
 from version import VERSION
 
 parser = SafeConfigParser()
@@ -149,7 +151,8 @@ socket.setdefaulttimeout(180)
 
 debug_limitdld = False #set to true during development to limit size of downloaded files
 debug_outputxml = False #output relevant XML when exceptions occur
-debug_pretenddld = False #set to true to fake downloading. connects to Plex but doesn't save the file.
+debug_pretenddld = False #set to true to fake downloading.
+                         #Connects to Plex but doesn't save the file.
 debug_pretendremove = False #set to true to fake removing files
 debug_plexurl = False #set to true to output plex URL  (caution - will output Plex token)
 minimum_to_watch_to_be_considerd_unwatched = 0.90 #minimum % to have watched an episode otherwise

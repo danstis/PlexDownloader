@@ -19,21 +19,22 @@
 # along with PlexDownloader.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from xml.dom import minidom
-import urllib
-import os
-import time
-import hashlib
 from ConfigParser import SafeConfigParser
+from time import gmtime, strftime
+from urllib2 import Request, urlopen, quote
+from xml.dom import minidom
+import base64
+import hashlib
+import os
+import platform
+import random
 import re
 import socket
-from urllib2 import Request, urlopen, quote
-import base64
-import uuid
-import platform
-from time import gmtime, strftime
-import random
 import string
+import time
+import urllib
+import uuid
+
 from myplex import myPlexSignin
 
 parser = SafeConfigParser()
