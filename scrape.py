@@ -36,7 +36,7 @@ import time
 import urllib
 import uuid
 
-from myplex import myPlexSignin
+from myplex import myplex_signin
 from version import VERSION
 
 parser = SafeConfigParser()
@@ -245,7 +245,7 @@ else:
     while True:
         try:
             if myplexstatus=="enable":
-                plextoken = myPlexSignin(myplexusername,myplexpassword)
+                plextoken = myplex_signin(myplexusername,myplexpassword)
             if myplexstatus=="enable" and plextoken=="":
                 print "Plex Scraper: Failed to login to myPlex. Please disable myPlex or enter your correct login."
                 exit()

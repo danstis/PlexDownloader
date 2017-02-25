@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Web interface lists are sorted alphabetically.
 - Web interface nav items relect active state on click.
 - Web interface jumps to correct location on selection of list.
+- Updates to resolve pylint messages in myplex.py.
 
 
 ## [v0.8.0] - 2017-02-19

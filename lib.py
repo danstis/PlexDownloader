@@ -35,7 +35,7 @@ import time
 import urllib
 import uuid
 
-from myplex import myPlexSignin
+from myplex import myplex_signin
 
 parser = SafeConfigParser()
 parser.read('user.ini')

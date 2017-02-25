@@ -15,7 +15,7 @@ import uuid
 import web
 
 from lib import movieSearch, tvShowSearch, photoSearch, musicSearch
-from myplex import myPlexSignin
+from myplex import myplex_signin
 from version import VERSION
 
 parser = SafeConfigParser()
@@ -181,7 +181,7 @@ def tvShowSearchWeb():
     tvwanted.sort()
 
 if myplexstatus == "enable":
-    plextoken = myPlexSignin(myplexusername, myplexpassword)
+    plextoken = myplex_signin(myplexusername, myplexpassword)
 if myplexstatus == "enable" and plextoken == "":
     print "Failed to login to myPlex. Please disable myPlex or enter your correct login."
     exit()
