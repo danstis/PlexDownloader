@@ -1,6 +1,4 @@
 """ Contains functions used for interacting with MyPlex"""
-from ConfigParser import SafeConfigParser
-from urllib2 import Request, urlopen, quote
 import base64
 import os
 import platform
@@ -8,6 +6,8 @@ import re
 import socket
 import urllib
 import uuid
+from ConfigParser import SafeConfigParser
+from urllib2 import Request, quote, urlopen
 
 PARSER = SafeConfigParser()
 PARSER.read('user.ini')

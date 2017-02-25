@@ -20,21 +20,24 @@
 #
 
 from __future__ import unicode_literals
-from ConfigParser import SafeConfigParser
-from time import gmtime, strftime
-from xml.dom import minidom
+
 import codecs
 import os
 import random
 import re
 import socket
 import string
+import subprocess
 import sys
 import time
 import traceback
 import urllib
 import urllib2
 import uuid
+from ConfigParser import SafeConfigParser
+from time import gmtime, strftime
+from types import *
+from xml.dom import minidom
 
 from myplex import myplex_signin
 from version import VERSION
@@ -42,7 +45,6 @@ from version import VERSION
 parser = SafeConfigParser()
 parser.read('user.ini')
 
-import subprocess
 
 # redo stdout so unicode can be printed to the screen.
 # Otherwise would have to encode the output of every print message
@@ -945,8 +947,6 @@ def constructPlexDownloadUrl(key):
     if debug_plexurl: print http
     return http
 
-#Plex/minidom don't get along well with character encoding.  This is a hack to fix errors that you get with extended characters.
-from types import *
 def geta(o, attr):
     try:
         a = o.getAttribute(attr)

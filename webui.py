@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-from ConfigParser import SafeConfigParser
-from time import gmtime, strftime
-from urllib2 import Request, urlopen, quote
-from xml.dom import minidom
 import base64
 import os
 import platform
@@ -12,9 +8,13 @@ import socket
 import time
 import urllib
 import uuid
-import web
+from ConfigParser import SafeConfigParser
+from lib import movieSearch, musicSearch, photoSearch, tvShowSearch
+from time import gmtime, strftime
+from urllib2 import Request, quote, urlopen
+from xml.dom import minidom
 
-from lib import movieSearch, tvShowSearch, photoSearch, musicSearch
+import web
 from myplex import myplex_signin
 from version import VERSION
 

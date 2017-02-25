@@ -19,10 +19,6 @@
 # along with PlexDownloader.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from ConfigParser import SafeConfigParser
-from time import gmtime, strftime
-from urllib2 import Request, urlopen, quote
-from xml.dom import minidom
 import base64
 import hashlib
 import os
@@ -34,6 +30,10 @@ import string
 import time
 import urllib
 import uuid
+from ConfigParser import SafeConfigParser
+from time import gmtime, strftime
+from urllib2 import Request, quote, urlopen
+from xml.dom import minidom
 
 from myplex import myplex_signin
 
