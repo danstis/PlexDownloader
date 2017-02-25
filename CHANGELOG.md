@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Web interface external links open in new browser tab.
 - Web interface lists are sorted alphabetically.
+- Web interface nav items relect active state on click.
+- Web interface jumps to correct location on selection of list.
 
 
 ## [v0.8.0] - 2017-02-19
