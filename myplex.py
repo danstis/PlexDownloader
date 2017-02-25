@@ -56,8 +56,11 @@ def myplex_signin(username, password):
                     serverlist = tokenfile.read()
                     tokens = re.findall(r"accessToken=\"(.*?)\"", serverlist)
                     tokens = list(set(tokens))
-                    tokens.remove(authtoken)
-                    authtoken = tokens[0]
+                    if authtoken in tokens:
+                        tokens.remove(authtoken)
+                        authtoken = tokens[0]
+                    else:
+                        authtoken = tokens[1]
                     tokenfile = open('token.txt', 'w+')
                     tokenfile.write(authtoken)
                     tokenfile.close()
