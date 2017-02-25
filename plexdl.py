@@ -39,15 +39,15 @@ from time import gmtime, strftime
 from types import *
 from xml.dom import minidom
 
+from logger import logger
 from myplex import myplex_signin
 from version import VERSION
 
 parser = SafeConfigParser()
 parser.read('user.ini')
 
-
-# redo stdout so unicode can be printed to the screen.
-# Otherwise would have to encode the output of every print message
+# redo stdout so unicode can be logger.debug(ed to the screen.)
+# Otherwise would have to encode the output of every logger.debug( message)
 # only necessary on Python2. Can be removed for Python3
 if not sys.stdout.isatty():
     # set encoding when redirected
@@ -62,10 +62,10 @@ if sys.stderr.encoding != 'UTF-8':
 webstatus = parser.get('webui', 'status')
 webport = parser.get('webui', 'port')
 if webstatus == "enable":
-    print "Starting PlexDownloader Web Manager..."
+    logger.debug("Starting PlexDownloader Web Manager...")
     subprocess.Popen(["python", "webui.py", webport])
 
-print "Starting Plex Scraper..."
+logger.debug("Starting Plex Scraper...")
 subprocess.Popen(["python", "scrape.py"])
 
 sleepTime = parser.get('general', 'sleeptime')
@@ -163,7 +163,7 @@ verbose = 1
 
 plextoken = ""
 
-print "PlexDownloader - " + VERSION
+logger.debug( "PlexDownloader - " + VERSION)
 
 class MovieDownloader(object):
     class NoConfig(Exception):
@@ -176,7 +176,7 @@ class MovieDownloader(object):
             cfg += unicode(num)
 
         if not parser.has_section(cfg) or not parser.has_section(tc):
-            #print "MovieDownloader %d - aborting" % num
+            #logger.debug( "MovieDownloader %d - aborting" % num)
             raise MovieDownloader.NoConfig("No config section")
 
         self.transcodeactive = parser.get(tc, 'active')
@@ -192,8 +192,8 @@ class MovieDownloader(object):
         self.active = parser.get(cfg, 'active')
         self.unwatched = parser.get(cfg, 'unwatched')
         self.structure = parser.get(cfg, 'folderstructure')
-        #print "MovieDownloader %d - success" % num
-        print "Syncing Movies to %s" % (self.location)
+        #logger.debug( "MovieDownloader %d - success" % num)
+        logger.debug( "Syncing Movies to %s" % (self.location))
 
     def isactive(self):
         if self.active == "enable": return True
@@ -201,16 +201,16 @@ class MovieDownloader(object):
 
     def search(self):
         if not os.path.exists(self.location) or not os.path.isdir(self.location):
-            print "Error: Path not located.  Create '%s' first." % (self.location)
+            logger.debug( "Error: Path not located.  Create '%s' first." % (self.location))
             return
         wantedlist, skiplist = ReadItemFile(self.itemfile)
         if len(wantedlist) > 0:
-            print unicode(len(wantedlist)) + " Movies Found in Your Wanted List..."
+            logger.debug( unicode(len(wantedlist)) + " Movies Found in Your Wanted List...")
         if len(skiplist) > 0:
-            print unicode(len(skiplist)) + " Movies Found in Your Skip List..."
+            logger.debug( unicode(len(skiplist)) + " Movies Found in Your Skip List...")
         xmldoc = minidom.parse(urllib.urlopen(constructPlexUrl("/library/sections/"+unicode(self.plexid)+"/all")))
         itemlist = xmldoc.getElementsByTagName('Video')
-        print unicode(len(itemlist)) + " Total Movies Found"
+        logger.debug( unicode(len(itemlist)) + " Total Movies Found")
         syncedItems = 0
         failedItems = 0
         for item in itemlist:
@@ -232,9 +232,9 @@ class MovieDownloader(object):
             #checks if user wants unwatched only
             if self.unwatched == "enable":
                 if viewcount == "unwatched":
-                    if verbose: print title + " ("+year+") is unwatched..."
+                    if verbose: logger.debug( title + " ("+year+") is unwatched...")
                 else:
-                    if verbose: print title + " ("+year+") is watched... skipping!"
+                    if verbose: logger.debug( title + " ("+year+") is watched... skipping!")
                     continue
             itemname = title + " ("+year+")"
             if (itemname not in skiplist) and ((itemname in wantedlist) or (self.sync == "enable")):
@@ -248,13 +248,13 @@ class MovieDownloader(object):
                             syncedItems += 1
                 except Exception as e:
                     failedItems += 1
-                    print "Error syncing " + itemname + ".  Skipping..."
-                    print(traceback.format_exc())
-                    if debug_outputxml: print item.toprettyxml(encoding='utf-8')
+                    logger.debug( "Error syncing " + itemname + ".  Skipping...")
+                    logger.debug((traceback.format_exc()))
+                    if debug_outputxml: logger.debug( item.toprettyxml(encoding='utf-8'))
             else:
-                if verbose: print itemname + " Not Found in Wanted List."
+                if verbose: logger.debug( itemname + " Not Found in Wanted List.")
         if syncedItems > 0 or failedItems > 0:
-            print "Movie sync complete: %d downloaded  %d errors" % (syncedItems, failedItems)
+            logger.debug( "Movie sync complete: %d downloaded  %d errors" % (syncedItems, failedItems))
 
     #checks if a movie exists.  Handles both self.structure choices
     #returns full path to file if it exists, None if it does not.
@@ -275,7 +275,7 @@ class MovieDownloader(object):
                     elif isValidVideoFile(f):
                         return os.path.join(folder, f)
                     else:
-                        #print "Located " + f + " but is invalid extension"
+                        #logger.debug( "Located " + f + " but is invalid extension")
                         pass
         return None
 
@@ -302,21 +302,21 @@ class MovieDownloader(object):
             if len(parts) > 1:
                 msg += " Item %d of %d" % (counter+1, len(parts))
             if "subtitle" in part:
-                print "    Downloading subtitle "+ msg
+                logger.debug( "    Downloading subtitle "+ msg)
                 link = constructPlexDownloadUrl(part['key'])
                 if not retrieveMediaFile(link, self.fullfilepath(itemname, part), extension=part["container"], overwrite=False):
-                    print "Subtitle file not downloaded"
+                    logger.debug( "Subtitle file not downloaded")
             elif self.transcodeactive == "enable":
-                print "    Downloading transcoded "+ msg
+                logger.debug( "    Downloading transcoded "+ msg)
                 link = getTranscodeVideoURL(plexkey, self.quality, self.width, self.height, self.bitrate, plexsession, plextoken, counter)
                 if not retrieveMediaFile(link, self.fullfilepath(itemname, part), overwrite=False):
-                    print "Video not transcoded"
+                    logger.debug( "Video not transcoded")
             else:
-                print "    Downloading "+ msg
+                logger.debug( "    Downloading "+ msg)
                 link = constructPlexDownloadUrl(part['key'])
                 ext = os.path.splitext(part['filename'])[1][1:] #override
                 if not retrieveMediaFile(link, self.fullfilepath(itemname, part), extension=getFilesystemSafeName(ext), overwrite=False):
-                    print "Video not downloaded"
+                    logger.debug( "Video not downloaded")
 
 class TvDownloader(object):
     class NoConfig(Exception):
@@ -347,8 +347,8 @@ class TvDownloader(object):
         self.structure = parser.get(cfg, 'folderstructure')
         self.syncahead = int(parser.get(cfg, 'syncahead'))
         self.exactnamematch = False   #for server mode, filenames must match exactly (except for extension)
-        #print "MovieDownloader %d - success" % num
-        print "Syncing TV to %s" % (self.location)
+        #logger.debug( "MovieDownloader %d - success" % num)
+        logger.debug( "Syncing TV to %s" % (self.location))
 
     def isactive(self):
         if self.active == "enable": return True
@@ -356,16 +356,16 @@ class TvDownloader(object):
 
     def search(self):
         if not os.path.exists(self.location) or not os.path.isdir(self.location):
-            print "Error: Path not located.  Create '%s' first." % (self.location)
+            logger.debug( "Error: Path not located.  Create '%s' first." % (self.location))
             return
         wantedlist, skiplist = ReadItemFile(self.itemfile)
         if len(wantedlist) > 0:
-            print unicode(len(wantedlist)) + " TV Shows Found in Your Wanted List..."
+            logger.debug( unicode(len(wantedlist)) + " TV Shows Found in Your Wanted List...")
         if len(skiplist) > 0:
-            print unicode(len(skiplist)) + " TV Shows Found in Your Skip List..."
+            logger.debug( unicode(len(skiplist)) + " TV Shows Found in Your Skip List...")
         xmldoc = minidom.parse(urllib.urlopen(constructPlexUrl("/library/sections/"+self.plexid+"/all")))
         itemlist = xmldoc.getElementsByTagName('Directory')
-        print unicode(len(itemlist)) + " Total TV Shows Found"
+        logger.debug( unicode(len(itemlist)) + " Total TV Shows Found")
         syncedItems = 0
         failedItems = 0
         removedItems = 0
@@ -378,7 +378,7 @@ class TvDownloader(object):
             unwatchedItems = 0
             #safeitemname = getFilesystemSafeName(title)
             if (title not in skiplist) and ((title in wantedlist) or (self.sync == "enable")):
-                if verbose: print title + " Found in Wanted List"
+                if verbose: logger.debug( title + " Found in Wanted List")
                 xmlseason = minidom.parse(urllib.urlopen(constructPlexUrl(itemkey)))
                 seasonlist = xmlseason.getElementsByTagName('Directory')
                 #construct list of episodes to sync
@@ -400,7 +400,7 @@ class TvDownloader(object):
                     numEpisodes = 2  #number of episodes to retain.  todo: make this configurable
                     #shrink to just last N episodes.
                     episodelist = sorted(episodelist, key=lambda x: (int(geta(x, 'seasonIndex')), int(geta(x, 'index'))))[0-numEpisodes:]
-                if verbose: print "    Syncing %d episodes for %s" %(len(episodelist), title)
+                if verbose: logger.debug( "    Syncing %d episodes for %s" %(len(episodelist), title))
                 for counter, episode in enumerate(episodelist):
                     try:
                         episodekey = geta(episode, u'key')
@@ -410,10 +410,10 @@ class TvDownloader(object):
                         seasonindex = geta(episode, 'seasonIndex')  #Added during list creation
                         duration = long(geta(episode, 'duration'))
                         this_minimum_to_watch = long(duration * minimum_to_watch_to_be_considerd_unwatched)
-                        if verbose: print "-Analyzing Episode " + episodeindex
-                        ## if debug_outputxml: print episode.toprettyxml()
-                        ## if verbose: print "    Duration " + str(duration)
-                        ## if verbose: print "    Minimum to watch " + str(this_minimum_to_watch)
+                        if verbose: logger.debug( "-Analyzing Episode " + episodeindex)
+                        ## if debug_outputxml: logger.debug( episode.toprettyxml())
+                        ## if verbose: logger.debug( "    Duration " + str(duration))
+                        ## if verbose: logger.debug( "    Minimum to watch " + str(this_minimum_to_watch))
                         try:
                             #checks to see if episode has been viewed node is available
                             viewcount = long(geta(episode, 'lastViewedAt'))
@@ -426,23 +426,23 @@ class TvDownloader(object):
                         except Exception as e:
                             #if fails to find viewOffset will notify script that tv is unwatched
                             viewOffset = 0
-                        ## if verbose: print "    viewOffset " + str(viewOffset)
-                        ## if verbose: print "    viewcount: " + str(viewcount)
+                        ## if verbose: logger.debug( "    viewOffset " + str(viewOffset))
+                        ## if verbose: logger.debug( "    viewcount: " + str(viewcount))
                         #checks if user wants unwatched only
                         if self.unwatched == "enable":
                             if viewcount == "unwatched":
-                                if verbose: print "    Episode is unwatched..."
+                                if verbose: logger.debug( "    Episode is unwatched...")
                                 unwatchedItems += 1
                             elif viewcount == "partial":
-                                if verbose: print ("    Episode is {:.0%} < {:.0%} watched... INCLUDING ! ").format(float(viewOffset)/float(duration), minimum_to_watch_to_be_considerd_unwatched)
+                                if verbose: logger.debug( ("    Episode is {:.0%} < {:.0%} watched... INCLUDING ! ").format(float(viewOffset)/float(duration), minimum_to_watch_to_be_considerd_unwatched))
                                 unwatchedItems += 1
                             elif self.unwatched == "enable" and self.type == "all":
-                                if verbose: print "    Episode is watched... skipping or deleting if exists!"
+                                if verbose: logger.debug( "    Episode is watched... skipping or deleting if exists!")
                                 parts = getMediaContainerParts(episodekey)
                                 self.remove(title, seasonindex, episodeindex, episodetitle, episodekey, parts)
                                 continue
                             else:
-                                if verbose: print "    Episode is watched... skipping!"
+                                if verbose: logger.debug( "    Episode is watched... skipping!")
                                 continue
                         parts = getMediaContainerParts(episodekey)
                         if parts:
@@ -453,12 +453,12 @@ class TvDownloader(object):
                                     self.download(title, seasonindex, episodeindex, episodetitle, episodekey, parts)
                                     syncedItems += 1
                                 else:
-                                    if verbose: print "    Sync ahead limit reached... skipping!"
+                                    if verbose: logger.debug( "    Sync ahead limit reached... skipping!")
                     except Exception as e:
                         failedItems += 1
-                        print "    Error syncing episode.  Skipping..."
-                        print(traceback.format_exc())
-                        if debug_outputxml: print episode.toprettyxml(encoding='utf-8')
+                        logger.debug( "    Error syncing episode.  Skipping...")
+                        logger.debug((traceback.format_exc()))
+                        if debug_outputxml: logger.debug( episode.toprettyxml(encoding='utf-8'))
                 #remove old episodes
                 if self.type == "episode" and self.delete == "enable":
                     if episodelist:
@@ -467,9 +467,9 @@ class TvDownloader(object):
                         removedItems += r
                         failedItems += f
             else:
-                print title + " Not Found in Wanted List."
+                logger.debug( title + " Not Found in Wanted List.")
         if syncedItems > 0 or failedItems > 0 or removedItems > 0:
-            print "TV synch complete: %d downloaded, %d removed, %d errors" % (syncedItems, removedItems, failedItems)
+            logger.debug( "TV synch complete: %d downloaded, %d removed, %d errors" % (syncedItems, removedItems, failedItems))
 
     #removes all episodes and related files OLDER then season+episode
     def removeoldepisodes(self, title, season, episode):
@@ -514,12 +514,12 @@ class TvDownloader(object):
                             if isValidVideoFile(f) or isValidAudioFile(f) or isValidSubtitleFile(f):
                                 try:
                                     fn = os.path.join(folder, f)
-                                    print "Deleting old episode: " + fn
+                                    logger.debug( "Deleting old episode: " + fn)
                                     if not debug_pretendremove: os.remove(fn)
                                     removedItems += 1
                                 except Exception as e:
                                     failedItems += 1
-                                    print "Could not delete old episode. Will try again on the next scan."
+                                    logger.debug( "Could not delete old episode. Will try again on the next scan.")
         return (removedItems, failedItems)
 
     #checks if a tv episode exists based on season/episode.  Used to filter out already downloaded items.
@@ -552,7 +552,7 @@ class TvDownloader(object):
                         elif isValidVideoFile(f):
                             return os.path.join(folder, f)
                         else:
-                            #print "Located " + f + " but is invalid extension"
+                            #logger.debug( "Located " + f + " but is invalid extension")
                             pass
             return None
         elif self.structure == "server":
@@ -620,21 +620,21 @@ class TvDownloader(object):
             if len(parts) > 1:
                 msg += " Item %d of %d" % (counter+1, len(parts))
             if "subtitle" in part:
-                print "    Downloading subtitle "+ msg
+                logger.debug( "    Downloading subtitle "+ msg)
                 link = constructPlexDownloadUrl(part['key'])
                 if not retrieveMediaFile(link, self.fullfilepath(itemname, season, episode, eptitle, part), extension=part["container"], overwrite=False):
-                    print "Subtitle file not downloaded"
+                    logger.debug( "Subtitle file not downloaded")
             elif self.transcodeactive == "enable":
-                print "    Downloading transcoded "+ msg
+                logger.debug( "    Downloading transcoded "+ msg)
                 link = getTranscodeVideoURL(plexkey, self.quality, self.width, self.height, self.bitrate, plexsession, plextoken, counter)
                 if not retrieveMediaFile(link, self.fullfilepath(itemname, season, episode, eptitle, part), overwrite=False):
-                    print "Video file not transcoded"
+                    logger.debug( "Video file not transcoded")
             else:
-                print "    Downloading "+ msg
+                logger.debug( "    Downloading "+ msg)
                 link = constructPlexDownloadUrl(part['key'])
                 ext = os.path.splitext(part['filename'])[1][1:] #override extension
                 if not retrieveMediaFile(link, self.fullfilepath(itemname, season, episode, eptitle, part), extension=getFilesystemSafeName(ext), overwrite=False):
-                    print "Video file not downloaded"
+                    logger.debug( "Video file not downloaded")
 
     def remove(self, itemname, season, episode, eptitle, plexkey, parts):
         for counter, part in enumerate(parts):
@@ -645,20 +645,20 @@ class TvDownloader(object):
             if "subtitle" in part:
                 if os.path.isfile(self.fullfilepath(itemname, season, episode, eptitle, part)+part["container"]):
                     try:
-                        print "    Removing subtitle "+ msg
+                        logger.debug( "    Removing subtitle "+ msg)
                         os.remove(self.fullfilepath(itemname, season, episode, eptitle, part)+part["container"])
                     except:
-                        print "    Could not delete old subtitle. Will try again on the next scan."
+                        logger.debug( "    Could not delete old subtitle. Will try again on the next scan.")
             else:
                 ext = os.path.splitext(part['filename'])[1][1:] #override extension
                 if os.path.isfile(self.fullfilepath(itemname, season, episode, eptitle, part)+"."+getFilesystemSafeName(ext)):
                     try:
-                        print "    Removing "+ msg
+                        logger.debug( "    Removing "+ msg)
                         os.remove(self.fullfilepath(itemname, season, episode, eptitle, part)+"."+getFilesystemSafeName(ext))
                     except:
-                        print "    Could not delete old episode. Will try again on the next scan."
+                        logger.debug( "    Could not delete old episode. Will try again on the next scan.")
                 else:
-                    print "    File does not exist, skipping."
+                    logger.debug( "    File does not exist, skipping.")
 
 class MusicDownloader(object):
     class NoConfig(Exception):
@@ -677,7 +677,7 @@ class MusicDownloader(object):
         self.itemfile = parser.get(cfg, 'musicfile')
         self.sync = parser.get(cfg, 'fullsync')
         self.active = parser.get(cfg, 'active')
-        print "Syncing Music to %s" % (self.location)
+        logger.debug( "Syncing Music to %s" % (self.location))
 
     def isactive(self):
         if self.active == "enable": return True
@@ -685,16 +685,16 @@ class MusicDownloader(object):
 
     def search(self):
         if not os.path.exists(self.location) or not os.path.isdir(self.location):
-            print "Error: Path not located.  Create '%s' first." % (self.location)
+            logger.debug( "Error: Path not located.  Create '%s' first." % (self.location))
             return
         wantedlist, skiplist = ReadItemFile(self.itemfile)
         if len(wantedlist) > 0:
-            print unicode(len(wantedlist)) + " Artists Found in Your Wanted List..."
+            logger.debug( unicode(len(wantedlist)) + " Artists Found in Your Wanted List...")
         if len(skiplist) > 0:
-            print unicode(len(skiplist)) + " Artists Found in Your Skip List..."
+            logger.debug( unicode(len(skiplist)) + " Artists Found in Your Skip List...")
         xmldoc = minidom.parse(urllib.urlopen(constructPlexUrl("/library/sections/"+self.plexid+"/all")))
         itemlist = xmldoc.getElementsByTagName('Directory')
-        print unicode(len(itemlist)) + " Total TV Artists Found"
+        logger.debug( unicode(len(itemlist)) + " Total TV Artists Found")
         syncedItems = 0
         failedItems = 0
         for item in itemlist:
@@ -705,7 +705,7 @@ class MusicDownloader(object):
             itemkey = geta(item, 'key')
             if (title not in skiplist) and ((title in wantedlist) or (self.sync == "enable")):
                 try:
-                    if verbose: print title + " Found in Wanted List"
+                    if verbose: logger.debug( title + " Found in Wanted List")
                     xmlseason = minidom.parse(urllib.urlopen(constructPlexUrl(itemkey)))
                     cdlist = xmlseason.getElementsByTagName('Directory')
                     for cd in cdlist:
@@ -719,7 +719,7 @@ class MusicDownloader(object):
                             songnames = [geta(s, 'title').strip() for s in songlist]
                             if any(songnames.count(x) > 1 for x in songnames):
                                 numberTitles = True
-                                print "Warning: Duplicate song titles in %s.  Adding track number at beginning of filename." % (title)
+                                logger.debug( "Warning: Duplicate song titles in %s.  Adding track number at beginning of filename." % (title))
                             for counter, song in enumerate(songlist):
                                 songtitle = geta(song, 'title').strip()
                                 songrating = geta(song, 'ratingKey')
@@ -739,13 +739,13 @@ class MusicDownloader(object):
                                         syncedItems += 1
                 except Exception as e:
                     failedItems += 1
-                    print "Error syncing " + title + ".  Skipping..."
-                    print(traceback.format_exc())
-                    if debug_outputxml: print item.toprettyxml(encoding='utf-8')
+                    logger.debug( "Error syncing " + title + ".  Skipping...")
+                    logger.debug((traceback.format_exc()))
+                    if debug_outputxml: logger.debug( item.toprettyxml(encoding='utf-8'))
             else:
-                print title + " Not Found in Wanted List."
+                logger.debug( title + " Not Found in Wanted List.")
         if syncedItems > 0 or failedItems > 0:
-            print "Music synch complete: %d downloaded, %d errors" % (syncedItems, failedItems)
+            logger.debug( "Music synch complete: %d downloaded, %d errors" % (syncedItems, failedItems))
 
     #returns full filepath.  makes it all filesystem name-safe
     def fullfilepath(self, artist, cd, song, part, extension=None):
@@ -766,7 +766,7 @@ class MusicDownloader(object):
                     if isValidAudioFile(f):
                         return os.path.join(folder, f)
                     else:
-                        #print "Located " + f + " but is invalid extension"
+                        #logger.debug( "Located " + f + " but is invalid extension")
                         pass
         return None
 
@@ -777,12 +777,12 @@ class MusicDownloader(object):
             else:
                 msg = cd + " Song: "+song+"..."
             #this is good for both audio files and any future subtitles (future-proof for lyrics)
-            print "    Downloading "+ msg
+            logger.debug( "    Downloading "+ msg)
             link = constructPlexUrl(part['key'])
             ext = part['container']  #use whatever the server said it is first
             if not ext: ext = os.path.splitext(part['filename'])[1][1:]
             if not retrieveMediaFile(link, self.fullfilepath(artist, cd, song, part), extension=getFilesystemSafeName(ext), overwrite=False):
-                print "Music file not downloaded"
+                logger.debug( "Music file not downloaded")
 
 
 
@@ -863,7 +863,7 @@ def getTranscodeVideoURL(plexkey, quality, width, height, bitrate, session, toke
            )
     if myplexstatus == "enable":
         link = link+"&X-Plex-Token="+token
-    if debug_plexurl: print link
+    if debug_plexurl: logger.debug( link)
     return link
 
 #hls flow
@@ -877,7 +877,7 @@ def tell_me_about(s): return (type(s), s)
 #Returns True on download, False on no-download or failure
 def retrieveMediaFile(link, filename, extension=None, overwrite=False):
     try:
-        #if verbose: print "storing link to: " + filename
+        #if verbose: logger.debug( "storing link to: " + filename)
         cleanup = False  #gracefully cleanup failed transcodes so we can try again
         if not os.path.exists(os.path.split(filename)[0]):
             os.makedirs(os.path.split(filename)[0])
@@ -888,16 +888,16 @@ def retrieveMediaFile(link, filename, extension=None, overwrite=False):
             if mimetype in mimetypes:
                 extension = mimetypes[mimetype]
             else:
-                print "Warning: Unknown mimetype for file (%s) Using mpg as default" % (mimetype)
+                logger.debug( "Warning: Unknown mimetype for file (%s) Using mpg as default" % (mimetype))
                 extension = "mpg"  #use this as default
         filename = filename+"."+extension.lower()
-        #if verbose: print "Downloading "+link+" ==> "+filename
-        if verbose: print "    Downloading "+filename
+        #if verbose: logger.debug( "Downloading "+link+" ==> "+filename)
+        if verbose: logger.debug( "    Downloading "+filename)
         if debug_pretenddld: return True
         if overwrite or (not os.path.isfile(filename)):
-            #print tell_me_about(filename.encode("utf8"))
-            #print tell_me_about(filename.encode("cp1252"))
-            #print tell_me_about(filename.encode("cp1252").decode("utf8"))
+            #logger.debug( tell_me_about(filename.encode("utf8")))
+            #logger.debug( tell_me_about(filename.encode("cp1252")))
+            #logger.debug( tell_me_about(filename.encode("cp1252").decode("utf8")))
             #filename = filename.encode("cp1252").decode("utf-8")
             with open(filename, "wb") as fp:
                 cleanup = True
@@ -914,7 +914,7 @@ def retrieveMediaFile(link, filename, extension=None, overwrite=False):
         else:
             #this shouldn't really happen much.  Existing files should be caught before file is downloaded.
             #Can happen when there are two video files for a single Plex video that are the same except for extension.
-            print "File %s already exists. Skipping download." % (filename)
+            logger.debug( "File %s already exists. Skipping download." % (filename))
             return False
     except (KeyboardInterrupt, SystemExit):
         try:
@@ -923,9 +923,9 @@ def retrieveMediaFile(link, filename, extension=None, overwrite=False):
             pass
         raise KeyboardInterrupt()
     except Exception as e:
-        print "Something went wrong transcoding video... Deleting and retrying on next scan!"
-        print "Something went wrong: " + unicode(e)
-        print(traceback.format_exc())
+        logger.debug( "Something went wrong transcoding video... Deleting and retrying on next scan!")
+        logger.debug( "Something went wrong: " + unicode(e))
+        logger.debug((traceback.format_exc()))
         try:
             if cleanup: os.remove(filename)
         except:
@@ -937,14 +937,14 @@ def constructPlexUrl(key):
     http = unicode(url) + unicode(key)
     if myplexstatus == "enable":
         http += "?X-Plex-Token="+plextoken
-    if debug_plexurl: print http
+    if debug_plexurl: logger.debug( http)
     return http
 
 def constructPlexDownloadUrl(key):
     http = unicode(url) + unicode(key)
     if myplexstatus == "enable":
         http += "?download=1&X-Plex-Token="+plextoken
-    if debug_plexurl: print http
+    if debug_plexurl: logger.debug( http)
     return http
 
 def geta(o, attr):
@@ -954,9 +954,9 @@ def geta(o, attr):
             return u''
         return a
     except Exception as e:
-        print "Something went wrong get attribute: " + unicode(e)
-        print(traceback.format_exc())
-        print tell_me_about(a)
+        logger.debug( "Something went wrong get attribute: " + unicode(e))
+        logger.debug((traceback.format_exc()))
+        logger.debug( tell_me_about(a))
         return u''
 
 #Loads the passed key from node.
@@ -997,16 +997,16 @@ def getMediaContainerParts(key):
                         streamcontainer += geta(stream, "codec").lower()
                         sub_parts.append({"num":sub_counts[lang], "key":geta(stream, "key"), "filename":filename, "foldername":foldername, "container":streamcontainer, "subtitle":True})
             except Exception as e:
-                print "Error while getting subtitles"
-                print(traceback.format_exc())
+                logger.debug( "Error while getting subtitles")
+                logger.debug((traceback.format_exc()))
         #When more then 1 part, add total number of parts to each part record for the non-subtitle files
         if len(parts) > 1:
             for n in range(len(parts)):
                 parts[n]["total"] = len(parts)
         return parts+sub_parts
     except Exception as e:
-        print "Error while getting media parts"
-        print(traceback.format_exc())
+        logger.debug( "Error while getting media parts")
+        logger.debug((traceback.format_exc()))
         return None
 
 def getFilesystemSafeName(s):
@@ -1021,16 +1021,16 @@ def photoDownloader(albumname, picturename, link, container):
     if not os.path.exists(picturelocation+albumname):
         os.makedirs(picturelocation+albumname)
 
-    print "Downloading Album: "+ albumname + " Picture: " +picturename +" ..."
+    logger.debug( "Downloading Album: "+ albumname + " Picture: " +picturename +" ...")
 
     if not os.path.isfile(picturelocation+albumname+"/"+picturename+"."+container):
         try:
             photofile.retrieve(link, picturelocation+albumname+"/"+picturename+"."+container)
         except Exception as e:
-            print "Something went wrong downloading this picture... Deleting and retrying on next picture scan!"
+            logger.debug( "Something went wrong downloading this picture... Deleting and retrying on next picture scan!")
             os.remove(picturelocation+albumname+"/"+picturename+"."+container)
     else:
-        print "File already exists. Skipping picture."
+        logger.debug( "File already exists. Skipping picture.")
 
 
 def photoSearch():
@@ -1038,7 +1038,7 @@ def photoSearch():
     pictureread = pictureopen.read()
     picturelist= pictureread.split("\n")
     pictureopen.close()
-    print unicode(len(picturelist)-1) + " Albums Found in Your Wanted List..."
+    logger.debug( unicode(len(picturelist)-1) + " Albums Found in Your Wanted List...")
 
     if myplexstatus == "enable":
         pichttp = url+"/library/sections/"+pictureid+"/all"+"?X-Plex-Token="+plextoken
@@ -1047,7 +1047,7 @@ def photoSearch():
     website = urllib.urlopen(pichttp)
     xmldoc = minidom.parse(website)
     itemlist = xmldoc.getElementsByTagName('Directory')
-    print unicode(len(itemlist)) + " Total Albums Found"
+    logger.debug( unicode(len(itemlist)) + " Total Albums Found")
     for item in itemlist:
         albumtitle = geta(item, 'title')
         #albumtitle = re.sub(r'[^\x00-\x7F]+', ' ', albumtitle)
@@ -1075,11 +1075,11 @@ def photoSearch():
                     piclink = url+pickey+"?X-Plex-Token="+plextoken
                 else:
                     piclink = url+pickey
-                print pictitle + albumtitle
+                logger.debug( pictitle + albumtitle)
                 photoDownloader(albumtitle, pictitle, piclink, piccontainer)
 
         else:
-            print albumtitle + " Album Not Found in Wanted List."
+            logger.debug( albumtitle + " Album Not Found in Wanted List.")
 
 
 #Load all sections from config file
@@ -1101,7 +1101,7 @@ while True:
         if myplexstatus == "enable":
             plextoken = myplex_signin(myplexusername, myplexpassword)
         if myplexstatus == "enable" and plextoken == "":
-            print "Failed to login to myPlex. Please disable myPlex or enter your correct login."
+            logger.debug( "Failed to login to myPlex. Please disable myPlex or enter your correct login.")
             exit()
         for x in tvshows:
             if(x.isactive()):
@@ -1115,12 +1115,12 @@ while True:
         if pictureactive == "enable":
             photoSearch()
 
-        print "Plex Download completed at "+ strftime("%Y-%m-%d %H:%M:%S")
-        print "Sleeping "+unicode(sleepTime)+" Seconds..."
+        logger.debug( "Plex Download completed at "+ strftime("%Y-%m-%d %H:%M:%S"))
+        logger.debug( "Sleeping "+unicode(sleepTime)+" Seconds...")
         time.sleep(sleepTime)
     except Exception as e:
-        print "Something went wrong: " + unicode(e)
-        print(traceback.format_exc())
-        print "Plex Download failed at "+ strftime("%Y-%m-%d %H:%M:%S")
-        print "Retrying in "+unicode(sleepTime)+" Seconds..."
+        logger.debug( "Something went wrong: " + unicode(e))
+        logger.debug((traceback.format_exc()))
+        logger.debug( "Plex Download failed at "+ strftime("%Y-%m-%d %H:%M:%S"))
+        logger.debug( "Retrying in "+unicode(sleepTime)+" Seconds...")
         time.sleep(sleepTime)
