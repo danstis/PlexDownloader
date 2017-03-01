@@ -9,6 +9,8 @@ import uuid
 from ConfigParser import SafeConfigParser
 from urllib2 import Request, quote, urlopen
 
+from logger import logger
+
 PARSER = SafeConfigParser()
 PARSER.read('user.ini')
 
@@ -24,10 +26,10 @@ def myplex_signin(username, password):
         if os.path.isfile('token.txt'):
             with open('token.txt', 'r') as tokenfile:
                 authtoken = tokenfile.readline()
-            print "Using cached myPlex token."
+            logger.info("Using cached myPlex token.")
             return authtoken
         elif username != '' and password != '':
-            print "Fetching myPlex authentication token."
+            logger.info("Fetching myPlex authentication token.")
             headers = {}
             headers["Authorization"] = "Basic %s" % base64.encodestring(
                 '%s:%s' % (username, password)).replace('\n', '')
@@ -61,16 +63,16 @@ def myplex_signin(username, password):
                     tokenfile = open('token.txt', 'w+')
                     tokenfile.write(authtoken)
                     tokenfile.close()
-                    print "Successfully grabbed shared myPlex Tokens!"
+                    logger.info("Successfully grabbed shared myPlex Tokens!")
                     return authtoken
                 else:
-                    print "Successfully authenticated with myPlex!"
+                    logger.info("Successfully authenticated with myPlex!")
                     return authtoken
             else:
-                print "Failed to login to myPlex!"
+                logger.error("Failed to login to myPlex!")
                 return authtoken
         else:
             authtoken = ""
 
     except Exception, e:
-        print "Failed to login to myPlex: %s" % str(e)
+        logger.error("Failed to login to myPlex: %s" % str(e))
