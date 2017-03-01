@@ -1,0 +1,5 @@
+cryptography==1.7
+PyYAML==3.11
+pytest>=2.9.2
+pylint>=1.6.5
+mock>=2.0.0
