@@ -11,7 +11,7 @@ python:
 #   - "nightly" # currently points to 3.7-dev
 install: pip install -r requirements.txt
 before_script: mv user.ini.config user.ini
-script: pytest
+script: py.test --cov=./
 after_success:
     pip install codecov
     codecov
