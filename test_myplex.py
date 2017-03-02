@@ -11,7 +11,7 @@ import myplex
 def test_read_token():
     """ Test for reading token from token.txt file """
     os.path.isfile = MagicMock(return_value=True)
-    with patch("__builtin__.open", mock_open(read_data="ExampleToken")) as mock_file:
+    with patch("__builtin__.open", mock_open(read_data="ExampleToken")):
         assert myplex.myplex_signin('aaa', 'aaa') == 'ExampleToken'
 
 def test_no_username():
