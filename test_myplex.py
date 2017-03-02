@@ -3,9 +3,16 @@ Tests for myplex.py
 """
 import os
 
-from mock import MagicMock
+from mock import MagicMock, mock_open, patch
 
 import myplex
+
+
+def test_read_token():
+    """ Test for reading token from token.txt file """
+    os.path.isfile = MagicMock(return_value=True)
+    with patch("__builtin__.open", mock_open(read_data="ExampleToken")) as mock_file:
+        assert myplex.myplex_signin('aaa', 'aaa') == 'ExampleToken'
 
 def test_no_username():
     """ Test for no username being populated in the user.ini. """
