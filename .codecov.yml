@@ -21,3 +21,4 @@ coverage:
   ignore:
     - "templates"
     - "static"
+    - "test_*"
