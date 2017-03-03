@@ -54,3 +54,15 @@ def test_generate_token_without_plexshared(mock_urlopen, mock_isfile):
         mock_urlopen.return_value = resp
         myplex.MYPLEXSHARED = 'enable'
         assert myplex.myplex_signin('aaa', 'bbb') == 'Dummy-Auth-Token2'
+
+@patch('myplex.os.path.isfile')
+@patch('myplex.urlopen')
+def test_myplex_failed_login(mock_urlopen, mock_isfile):
+    """ Test token generation using the credentials in user.ini. """
+    mock_isfile.return_value = False
+    with patch("__builtin__.open", mock_open(read_data="ExampleToken")):
+        resp = Mock()
+        resp.read.side_effect = ['', '']
+        mock_urlopen.return_value = resp
+        myplex.MYPLEXSHARED = 'enable'
+        assert myplex.myplex_signin('aaa', 'bbb') is None
