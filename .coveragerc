@@ -8,3 +8,5 @@ ignore_errors = True
 omit =
     tests_*.py
     setup.py
+    static
+    templates
