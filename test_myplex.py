@@ -64,5 +64,4 @@ def test_myplex_failed_login(mock_urlopen, mock_isfile):
         resp = Mock()
         resp.read.side_effect = ['', '']
         mock_urlopen.return_value = resp
-        myplex.MYPLEXSHARED = 'enable'
         assert myplex.myplex_signin('aaa', 'bbb') is None
