@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Web interface jumps to correct location on selection of list.
 - Updates to resolve pylint messages in myplex.py.
 
+### Added
+- Added simple tests to myplex.py.
+- Travis-CI automated testing on push.
 
 ## [v0.8.0] - 2017-02-19
 ### Added
