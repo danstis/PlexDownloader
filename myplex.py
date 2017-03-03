@@ -4,7 +4,6 @@ import os
 import platform
 import re
 import socket
-import urllib
 import uuid
 from ConfigParser import SafeConfigParser
 from urllib2 import Request, quote, urlopen
@@ -52,7 +51,7 @@ def myplex_signin(username, password):
                 tokenfile.close()
                 if MYPLEXSHARED == "enable":
                     link = "https://plex.tv/pms/system/library/sections?X-Plex-Token=" + authtoken
-                    tokenfile = urllib.urlopen(link)
+                    tokenfile = urlopen(link)
                     serverlist = tokenfile.read()
                     tokens = re.findall(r"accessToken=\"(.*?)\"", serverlist)
                     tokens = list(set(tokens))
