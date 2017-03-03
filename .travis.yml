@@ -11,7 +11,10 @@ python:
 #   - "nightly" # currently points to 3.7-dev
 install: pip install -r requirements.txt
 before_script: mv user.ini.config user.ini
-script: pytest
+script: py.test --cov=./
+after_success:
+    - pip install codecov
+    - codecov
 notifications:
   slack:
     secure: U4F4wPrR6WO2oetSpBgc9XOcae7SvtnA/m89tfRFqPU4KoeOR4ixB541ayTKe6pJ+rK50hERkFexbEfHyke9p4TobA/iTAyQ5a6NRMZkQ7YPP25wONaQsmtg8LyM3yLD1UCrpF+C6xgmqVig4i5sU+inPKXiBaYBan/cWfryaFBZVxHf+hG690/77uxNhw2kbutSmeHL3fIGO7hNgYQyXLE3fJQAdMLlSpRpr8Oe0GlFDJv7c1+XRCQ16K6vAJSetFPJnO79dh1MJ9KHGPN7Rx2rtzXURIMfA61+afa9CdhUM013XUSy3NEBN0kZyFdiV4zjUUw7NU4b0ReilrybN2M9Xr4xKhTBg0/AgltQrkP6UljCilVs1hITj2Tv5swkcr0fauFyBijD1k7lpnvJ8jDWeX2YTk4FNGI6o45Z5WvcBV9K0TTk+bYNgwzbKhLJoLTOykIY8Pu2AgFpRg94mTMWKP3jpcR6Vrul6VvbyxnmNS/8jCPPTY+eXdbBQfx5ZfTW/E57A/ZUx0B8qH0dFWaOmj95N28mk9ZuDzKOvS+S2wBcKm0m5LtLYAACMvyxYLhzcOEquB1dyeto585qqkik72TZB7KAE68IUV7k4zpiBfLpDDfJbO8Q2hCXc8tzBIFDEFZAd15S1l4zLJDyQfWM/xY3T0C2tcrXvaNmw8k=

@@ -1,0 +1,24 @@
+codecov:
+  notify:
+    require_ci_to_pass: yes
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  notify:
+    slack:
+      default:
+        url: secret:tMrveYqbRsg9fCHgi1bM8+G42OPRJg2rfHkSgvTDl34O2tq7h9wub9KbAcAQUan2cqcomKFBDvRBoRIIXgwcWAudU9vvIcE3sQglLi6cU3RDEvIbuA0VdPV0/Zhb+3Uo6/gDBljg579ml2WWFMq/43xi1dmc8GlOymv0WHMnniQ=
+        threshold: 1%
+
+  status:
+    project: yes
+    patch: yes
+    changes: no
+
+  ignore:
+    - "templates"
+    - "static"
+    - "test_*"
