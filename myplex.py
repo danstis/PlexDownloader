@@ -41,28 +41,26 @@ def myplex_signin(username, password):
             headers["X-Plex-Provides"] = "controller"
             request = Request("https://plex.tv/users/sign_in.xml",
                               data="", headers=headers)
-            request = urlopen(request)
+            response = urlopen(request)
             compiled = re.compile(
                 r"<authentication-token>(.*)</authentication-token>", re.DOTALL)
-            authtoken = compiled.search(request.read()).group(1).strip()
+            authtoken = compiled.search(response.read()).group(1).strip()
             if authtoken != None:
-                tokenfile = open('token.txt', 'w+')
-                tokenfile.write(authtoken)
-                tokenfile.close()
+                with open('token.txt', 'w+') as tokenfile:
+                    tokenfile.write(authtoken)
                 if MYPLEXSHARED == "enable":
                     link = "https://plex.tv/pms/system/library/sections?X-Plex-Token=" + authtoken
-                    tokenfile = urlopen(link)
-                    serverlist = tokenfile.read()
+                    response = urlopen(link)
+                    serverlist = response.read()
                     tokens = re.findall(r"accessToken=\"(.*?)\"", serverlist)
-                    tokens = list(set(tokens))
-                    if authtoken in tokens:
-                        tokens.remove(authtoken)
-                        authtoken = tokens[0]
+                    tokenlist = list(set(tokens))
+                    if authtoken in tokenlist:
+                        tokenlist.remove(authtoken)
+                        authtoken = tokenlist[0]
                     else:
-                        authtoken = tokens[1]
-                    tokenfile = open('token.txt', 'w+')
-                    tokenfile.write(authtoken)
-                    tokenfile.close()
+                        authtoken = tokenlist[1]
+                    with open('token.txt', 'w+') as tokenfile:
+                        tokenfile.write(authtoken)
                     print "Successfully grabbed shared myPlex Tokens!"
                     return authtoken
                 else:
