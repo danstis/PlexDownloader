@@ -57,26 +57,26 @@ tvlocation = parser.get('tvshows', 'tvlocation')
 tvsync = parser.get('tvshows', 'fullsync')
 tvactive = parser.get('tvshows', 'active')
 tvdelete = parser.get('tvshows', 'autodelete')
-tvunwatched= parser.get('tvshows','unwatched')
+tvunwatched = parser.get('tvshows', 'unwatched')
 
-tvtranscode= parser.get('tvtranscode','active')
-tvheight = parser.get('tvtranscode','height')
-tvwidth = parser.get('tvtranscode','width')
-tvbitrate = parser.get('tvtranscode','maxbitrate')
-tvquality = parser.get('tvtranscode','videoquality')
+tvtranscode = parser.get('tvtranscode', 'active')
+tvheight = parser.get('tvtranscode', 'height')
+tvwidth = parser.get('tvtranscode', 'width')
+tvbitrate = parser.get('tvtranscode', 'maxbitrate')
+tvquality = parser.get('tvtranscode', 'videoquality')
 
-movietranscode = parser.get('movietranscode','active')
-movieheight = parser.get('movietranscode','height')
-moviewidth = parser.get('movietranscode','width')
-moviebitrate = parser.get('movietranscode','maxbitrate')
-moviequality = parser.get('movietranscode','videoquality')
+movietranscode = parser.get('movietranscode', 'active')
+movieheight = parser.get('movietranscode', 'height')
+moviewidth = parser.get('movietranscode', 'width')
+moviebitrate = parser.get('movietranscode', 'maxbitrate')
+moviequality = parser.get('movietranscode', 'videoquality')
 
 movieid = parser.get('movies', 'plexid')
 movielocation = parser.get('movies', 'movielocation')
 moviefile = parser.get('movies', 'moviefile')
 moviesync = parser.get('movies', 'fullsync')
 movieactive = parser.get('movies', 'active')
-movieunwatched = parser.get('movies','unwatched')
+movieunwatched = parser.get('movies', 'unwatched')
 
 musicid = parser.get('music', 'plexid')
 musiclocation = parser.get('music', 'musiclocation')
@@ -97,10 +97,10 @@ tvscrapelimit = int(parser.get('scrape', 'tvlimit'))
 scrapetimer = int(parser.get('scrape', 'timer'))
 
 
-plexsession=str(uuid.uuid4())
+plexsession = str(uuid.uuid4())
 socket.setdefaulttimeout(180)
 
-plextoken=""
+plextoken = ""
 
 print "PlexScraper - " + VERSION
 
@@ -110,7 +110,7 @@ print "PlexScraper - " + VERSION
 def ReadItemFile(itemfile):
     list = []
     try:
-        fp = open(itemfile,"r")
+        fp = open(itemfile, "r")
         list = fp.read().split("\n")
         fp.close()
     except Exception as e:
