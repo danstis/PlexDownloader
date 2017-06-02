@@ -86,7 +86,7 @@ def movieSearchWeb():
         moviehttp = url+"/library/sections/"+movieid+"/all"+"?X-Plex-Token="+plextoken
     else:
         moviehttp = url+"/library/sections/"+movieid+"/all"
-    website = urllib.urlopen(moviehttp)
+    website = urlopen(moviehttp)
     xmldoc = minidom.parse(website)
     movielibrary = xmldoc.getElementsByTagName('Video')
 
@@ -116,7 +116,7 @@ def musicSearchWeb():
         musichttp = url+"/library/sections/"+musicid+"/all"+"?X-Plex-Token="+plextoken
     else:
         musichttp = url+"/library/sections/"+musicid+"/all"
-    website = urllib.urlopen(musichttp)
+    website = urlopen(musichttp)
     xmldoc = minidom.parse(website)
     #Get list of artists
     itemlist = xmldoc.getElementsByTagName('Directory')
@@ -143,7 +143,7 @@ def photoSearchWeb():
         pichttp = url+"/library/sections/"+pictureid+"/all"+"?X-Plex-Token="+plextoken
     else:
         pichttp = url+"/library/sections/"+pictureid+"/all"
-    website = urllib.urlopen(pichttp)
+    website = urlopen(pichttp)
     xmldoc = minidom.parse(website)
     itemlist = xmldoc.getElementsByTagName('Directory')
     for item in itemlist:
@@ -169,7 +169,7 @@ def tvShowSearchWeb():
     else:
         tvhttp = url+"/library/sections/"+tvshowid+"/all"
 
-    website = urllib.urlopen(tvhttp)
+    website = urlopen(tvhttp)
     xmldoc = minidom.parse(website)
     itemlist = xmldoc.getElementsByTagName('Directory')
     for item in itemlist:

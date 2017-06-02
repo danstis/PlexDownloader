@@ -49,16 +49,17 @@ def myplex_signin(username, password):
                 with open('token.txt', 'w+') as tokenfile:
                     tokenfile.write(authtoken)
                 if MYPLEXSHARED == "enable":
-                    link = "https://plex.tv/pms/system/library/sections?X-Plex-Token=" + authtoken
+                    link = "https://plex.tv/api/resources.xml?includeHttps=1&includeRelay=1&X-Plex-Device-Name=iPhone&X-Plex-Token=" + authtoken
                     response = urlopen(link)
                     serverlist = response.read()
                     tokens = re.findall(r"accessToken=\"(.*?)\"", serverlist)
                     tokenlist = list(set(tokens))
-                    if authtoken in tokenlist:
-                        tokenlist.remove(authtoken)
-                        authtoken = tokenlist[0]
-                    else:
-                        authtoken = tokenlist[1]
+                    for item in tokenlist:
+                        print(item)
+                    print("-------------------------------")
+                    response = raw_input("Please enter your token: ")
+                    authtoken = response
+
                     with open('token.txt', 'w+') as tokenfile:
                         tokenfile.write(authtoken)
                     print "Successfully grabbed shared myPlex Tokens!"
