@@ -1,5 +1,9 @@
 # PlexDownloader
 
+[![travis-ci](https://travis-ci.org/danstis/PlexDownloader.svg?branch=master)](https://travis-ci.org/danstis/PlexDownloader)
+[![codebeat badge](https://codebeat.co/badges/73e30e9b-b9e1-47ce-bdb5-cb2963c90c48)](https://codebeat.co/projects/github-com-danstis-plexdownloader-master)
+[![codecov](https://codecov.io/gh/danstis/PlexDownloader/branch/master/graph/badge.svg)](https://codecov.io/gh/danstis/PlexDownloader)
+
 Desktop sync client and server-to-server sync client
 
 ## Features
@@ -92,8 +96,8 @@ plexid = 4
 # File whose content if the list of the tv shows you want to sync. One tv show per line. Enter exactly how you see it in plex.
 tvfile = tvshows.txt
 # (episode|recent|all):
-# 	Recent - will download on the most current season. 
-# 	All - will download every season. 
+# 	Recent - will download on the most current season.
+# 	All - will download every season.
 # 	Episode - will keep the 2 most current episodes downloaded.
 tvtype = recent
 # Download location for your synced tvshows
