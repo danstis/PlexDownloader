@@ -31,13 +31,12 @@ import subprocess
 import sys
 import time
 import traceback
-import urllib
-import urllib2
 import uuid
 from ConfigParser import SafeConfigParser
 from time import gmtime, strftime
 from types import *
 from xml.dom import minidom
+from urllib2 import Request, unquote,quote, urlopen
 
 from myplex import myplex_signin
 from version import VERSION
@@ -208,7 +207,7 @@ class MovieDownloader(object):
             print unicode(len(wantedlist)) + " Movies Found in Your Wanted List..."
         if len(skiplist) > 0:
             print unicode(len(skiplist)) + " Movies Found in Your Skip List..."
-        xmldoc = minidom.parse(urllib.urlopen(constructPlexUrl("/library/sections/"+unicode(self.plexid)+"/all")))
+        xmldoc = minidom.parse(urlopen(constructPlexUrl("/library/sections/"+unicode(self.plexid)+"/all")))
         itemlist = xmldoc.getElementsByTagName('Video')
         print unicode(len(itemlist)) + " Total Movies Found"
         syncedItems = 0
@@ -363,7 +362,7 @@ class TvDownloader(object):
             print unicode(len(wantedlist)) + " TV Shows Found in Your Wanted List..."
         if len(skiplist) > 0:
             print unicode(len(skiplist)) + " TV Shows Found in Your Skip List..."
-        xmldoc = minidom.parse(urllib.urlopen(constructPlexUrl("/library/sections/"+self.plexid+"/all")))
+        xmldoc = minidom.parse(urlopen(constructPlexUrl("/library/sections/"+self.plexid+"/all")))
         itemlist = xmldoc.getElementsByTagName('Directory')
         print unicode(len(itemlist)) + " Total TV Shows Found"
         syncedItems = 0
@@ -379,19 +378,19 @@ class TvDownloader(object):
             #safeitemname = getFilesystemSafeName(title)
             if (title not in skiplist) and ((title in wantedlist) or (self.sync == "enable")):
                 if verbose: print title + " Found in Wanted List"
-                xmlseason = minidom.parse(urllib.urlopen(constructPlexUrl(itemkey)))
+                xmlseason = minidom.parse(urlopen(constructPlexUrl(itemkey)))
                 seasonlist = xmlseason.getElementsByTagName('Directory')
                 #construct list of episodes to sync
                 episodelist = []
                 if (self.type == "all") or (self.type == "episode"):    #download everything
                     for season in seasonlist:
                         if season.hasAttribute('index'):   #skip "allSeasons"
-                            xmlepisode = minidom.parse(urllib.urlopen(constructPlexUrl(geta(season, 'key'))))
+                            xmlepisode = minidom.parse(urlopen(constructPlexUrl(geta(season, 'key'))))
                             for e in xmlepisode.getElementsByTagName('Video'):
                                 e.setAttribute('seasonIndex', geta(season, 'index'))
                                 episodelist.append(e)
                 elif (self.type == "recent"): #download latest season
-                    xmlepisode = minidom.parse(urllib.urlopen(constructPlexUrl(geta(seasonlist[len(seasonlist)-1], 'key'))))
+                    xmlepisode = minidom.parse(urlopen(constructPlexUrl(geta(seasonlist[len(seasonlist)-1], 'key'))))
                     for e in xmlepisode.getElementsByTagName('Video'):
                         e.setAttribute('seasonIndex', geta(seasonlist[len(seasonlist)-1], 'index'))
                         episodelist.append(e)
@@ -692,7 +691,7 @@ class MusicDownloader(object):
             print unicode(len(wantedlist)) + " Artists Found in Your Wanted List..."
         if len(skiplist) > 0:
             print unicode(len(skiplist)) + " Artists Found in Your Skip List..."
-        xmldoc = minidom.parse(urllib.urlopen(constructPlexUrl("/library/sections/"+self.plexid+"/all")))
+        xmldoc = minidom.parse(urlopen(constructPlexUrl("/library/sections/"+self.plexid+"/all")))
         itemlist = xmldoc.getElementsByTagName('Directory')
         print unicode(len(itemlist)) + " Total TV Artists Found"
         syncedItems = 0
@@ -706,12 +705,12 @@ class MusicDownloader(object):
             if (title not in skiplist) and ((title in wantedlist) or (self.sync == "enable")):
                 try:
                     if verbose: print title + " Found in Wanted List"
-                    xmlseason = minidom.parse(urllib.urlopen(constructPlexUrl(itemkey)))
+                    xmlseason = minidom.parse(urlopen(constructPlexUrl(itemkey)))
                     cdlist = xmlseason.getElementsByTagName('Directory')
                     for cd in cdlist:
                         cdtitle = geta(cd, 'title').strip()
                         if cd.hasAttribute('index'):   #skip "allSeasons"
-                            xmlsong = minidom.parse(urllib.urlopen(constructPlexUrl(geta(cd, 'key'))))
+                            xmlsong = minidom.parse(urlopen(constructPlexUrl(geta(cd, 'key'))))
                             #Get List of Songs
                             songlist = xmlsong.getElementsByTagName('Track')
                             #Check for duplicate song titles
@@ -881,7 +880,7 @@ def retrieveMediaFile(link, filename, extension=None, overwrite=False):
         cleanup = False  #gracefully cleanup failed transcodes so we can try again
         if not os.path.exists(os.path.split(filename)[0]):
             os.makedirs(os.path.split(filename)[0])
-        epfile = urllib.urlopen(link)
+        epfile = urlopen(link)
         if not extension:
             mimetype = epfile.info().type.lower()
             mimetype = mimetype.replace('content-type: ', '')  #plex has bug that returns "Content-Type" as part of the Content-Type.  Doh!
@@ -963,13 +962,13 @@ def geta(o, attr):
 #'container' is sometimes None
 def getMediaContainerParts(key):
     try:
-        xmlmedia = minidom.parse(urllib.urlopen(constructPlexUrl(key)))
+        xmlmedia = minidom.parse(urlopen(constructPlexUrl(key)))
         partindex = xmlmedia.getElementsByTagName('Part')
         parts = []
         sub_parts = []
         for counter, partitem in enumerate(partindex):
             downloadkey = geta(partitem, 'key')  #key goes directly to file
-            filepath = urllib2.unquote(geta(partitem, 'file'))
+            filepath = unquote(geta(partitem, 'file'))
             #filepath = urllib2.unquote(partitem.attributes['file'].value)
             filepath = filepath.encode("cp1252", errors='replace').decode("utf-8", errors='replace')  #Re-correct for extended characters
             filename = os.path.basename(filepath)
@@ -1014,7 +1013,7 @@ def getFilesystemSafeName(s):
     return s
 
 def photoDownloader(albumname, picturename, link, container):
-    photofile = urllib.URLopener()
+    photofile = URLopener()
     albumname = getFilesystemSafeName(albumname)
     picturename = getFilesystemSafeName(picturename)
 
@@ -1044,7 +1043,7 @@ def photoSearch():
         pichttp = url+"/library/sections/"+pictureid+"/all"+"?X-Plex-Token="+plextoken
     else:
         pichttp = url+"/library/sections/"+pictureid+"/all"
-    website = urllib.urlopen(pichttp)
+    website = urlopen(pichttp)
     xmldoc = minidom.parse(website)
     itemlist = xmldoc.getElementsByTagName('Directory')
     print unicode(len(itemlist)) + " Total Albums Found"
@@ -1060,7 +1059,7 @@ def photoSearch():
                 albumhttp = url+albumkey+"?X-Plex-Token="+plextoken
             else:
                 albumhttp = url+albumkey
-            albumweb = urllib.urlopen(albumhttp)
+            albumweb = urlopen(albumhttp)
             xmlalbum = minidom.parse(albumweb)
             picturesinalbum = xmlalbum.getElementsByTagName('Photo')
             for pics in picturesinalbum:
