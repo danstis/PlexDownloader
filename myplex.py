@@ -5,8 +5,9 @@ import platform
 import re
 import socket
 import uuid
-from ConfigParser import SafeConfigParser
-from urllib2 import Request, quote, urlopen
+from configparser import SafeConfigParser
+from urllib.request import Request, urlopen
+from urllib.parse import quote
 
 PARSER = SafeConfigParser()
 PARSER.read('user.ini')
@@ -23,10 +24,10 @@ def myplex_signin(username, password):
         if os.path.isfile('token.txt'):
             with open('token.txt', 'r') as tokenfile:
                 authtoken = tokenfile.readline()
-            print "Using cached myPlex token."
+            print("Using cached myPlex token.")
             return authtoken
         elif username != '' and password != '':
-            print "Fetching myPlex authentication token."
+            print("Fetching myPlex authentication token.")
             headers = {}
             headers["Authorization"] = "Basic %s" % base64.encodestring(
                 '%s:%s' % (username, password)).replace('\n', '')
@@ -61,16 +62,16 @@ def myplex_signin(username, password):
                         authtoken = tokenlist[1]
                     with open('token.txt', 'w+') as tokenfile:
                         tokenfile.write(authtoken)
-                    print "Successfully grabbed shared myPlex Tokens!"
+                    print("Successfully grabbed shared myPlex Tokens!")
                     return authtoken
                 else:
-                    print "Successfully authenticated with myPlex!"
+                    print("Successfully authenticated with myPlex!")
                     return authtoken
             else:
-                print "Failed to login to myPlex!"
+                print("Failed to login to myPlex!")
                 return authtoken
         else:
             authtoken = ""
 
-    except Exception, e:
-        print "Failed to login to myPlex: %s" % str(e)
+    except Exception as e:
+        print("Failed to login to myPlex: %s" % str(e))
